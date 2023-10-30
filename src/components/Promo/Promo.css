@@ -1,0 +1,139 @@
+.promo {
+  padding: 75px 0;
+  background-color: #073042;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media screen and (max-width:1023px) {
+  .promo {
+    padding: 140px 0 76px;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (max-width:767px) {
+  .promo {
+    padding: 70px 0 32px;
+  }
+}
+
+.promo__container {
+  margin-left: 70px;
+  width: calc(640/1280*100%);
+  display: flex;
+  flex-direction: column;
+}
+
+@media screen and (max-width:1023px) {
+  .promo__container {
+    margin-left: 0;
+    width: calc(680/768*100%);
+    align-items: center;
+  }
+}
+
+@media screen and (max-width:767px) {
+  .promo__container {
+    width: calc(300/320*100%);
+  }
+}
+
+.promo__title {
+  margin: 0 0 36px 0;
+  color: #FFFFFF;
+  font-size: 50px;
+  font-weight: 400;
+  line-height: 58px;
+}
+
+@media screen and (max-width:1023px) {
+  .promo__title {
+    margin-bottom: 22px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: 400;
+    line-height: 50px;
+  }
+}
+
+@media screen and (max-width:767px) {
+  .promo__title {
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 38px;
+  }
+}
+
+.promo__subtitle {
+  margin: 0;
+  margin-bottom: 146px;
+  max-width: 310px;
+  color: rgba(255, 255, 255, .5);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+@media screen and (max-width:1023px) {
+  .promo__subtitle {
+    margin-bottom: 92px;
+    max-width: 260px;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width:767px) {
+  .promo__subtitle {
+    margin-bottom: 80px;
+  }
+}
+
+.promo__link {
+  padding-top: 10px;
+  width: 129px;
+  min-height: 36px;
+  color: #FFFFFF;
+  display: block;
+  border-radius: 3px;
+  border: 1px solid #FFFFFF;
+  box-sizing: border-box;
+  text-decoration: none;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  transition: opacity .5s linear;
+}
+
+.promo__design {
+  margin-right: 70px;
+  width: 310px;
+  height: 304px;
+  background-image: url(../../images/landing-logo.png);
+  background-size: cover;
+}
+
+@media screen and (max-width:1023px) {
+  .promo__design {
+    margin-right: 0;
+    margin-bottom: 48px;
+    order: -1;
+  }
+}
+
+@media screen and (max-width:767px) {
+  .promo__design {
+    margin-bottom: 44px;
+    width: calc(210px + (310 - 210)*((100vw - 320px)/(768 - 320)));
+    height: calc(206px + (304 - 206)*((100vw - 320px)/(768 - 320)));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .promo__link:hover {
+    opacity: 0.7;
+    cursor: pointer;
+  }
+}
