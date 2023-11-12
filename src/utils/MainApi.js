@@ -131,8 +131,4 @@ const mainApi = new MainApi({
   baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
 });
 
-// const mainApi = new MainApi({
-//   baseUrl: "http://127.0.0.1:3000",
-// });
-
 export default mainApi
