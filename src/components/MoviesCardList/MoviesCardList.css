@@ -72,3 +72,8 @@
 .movies-cardlist__more_hidden {
   visibility: hidden;
 }
+
+.movies-cardlist__serch-error {
+  text-align: center;
+  color: #FFFFFF;
+}

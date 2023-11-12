@@ -9,7 +9,7 @@ import Register from '../Register/Register';
 import Error from '../Error/Error'
 import Profile from '../Profile/Profile';
 import Movies from '../Movies/Movies';
-import SavedMovies from '../SavedMovies/SavedMovies'
+import SavedMovies from '../SavedMovies/SavedMovies';
 // import { movies, savedMovies } from '../../utils/constants'
 // import { useEffect, useState } from 'react';
 

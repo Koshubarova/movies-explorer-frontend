@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import './Header.css'
 
-export default function Header({ name, loggedIn }) {
+export default function Header({ name, isLoggedIn }) {
   const { pathname } = useLocation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -36,7 +36,7 @@ export default function Header({ name, loggedIn }) {
       <div>
         <Link to={'/'} className="header__link-home"></Link>
       </div>
-      {name === 'home' && !loggedIn ?
+      {name === 'home' && ! isLoggedIn ?
         <nav>
           <ul className='header__links-container'>
             <li>
