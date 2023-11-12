@@ -1,6 +1,6 @@
 class MainApi {
   constructor(options) {
-    this._url = options.baseUrl;
+    this._baseUrl = options.baseUrl;
   }
 
   _checkResponse(res) {return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);}
@@ -10,14 +10,14 @@ class MainApi {
   //     .then(this._checkResponse)
   // }
 
-  register(username, email, password) {
-    return fetch(`${this._url}/signup`, {
+  register(name, email, password) {
+    return fetch(`${this._baseUrl}/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        name: username,
+        name: name,
         email: email,
         password: password
       })
@@ -26,7 +26,7 @@ class MainApi {
   }
 
   authorize(email, password) {
-    return fetch(`${this._url}/signin`, {
+    return fetch(`${this._baseUrl}/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ class MainApi {
   }
 
   checkToken(token) {
-    return fetch(`${this._url}/users/me`, {
+    return fetch(`${this._baseUrl}/users/me`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ class MainApi {
   }
 
   getMovies(token) {
-    return fetch(`${this._url}/movies`, {
+    return fetch(`${this._baseUrl}/movies`, {
       headers: {
         "Authorization" : `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ class MainApi {
   }
 
   getUserInfo(token) {
-    return fetch(`${this._url}/users/me`, {
+    return fetch(`${this._baseUrl}/users/me`, {
       headers: {
         authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -76,15 +76,15 @@ class MainApi {
     .then(this._checkResponse);
   }
 
-  setUserInfo(username, email, token) {
-    return fetch(`${this._url}/users/me`, {
+  setUserInfo(name, email, token) {
+    return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
       headers: {
         authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        name: username,
+        name: name,
         email: email,
       })
     })
@@ -92,7 +92,7 @@ class MainApi {
   }
 
   addMovie(data, token) {
-    return fetch(`${this._url}/movies`, {
+    return fetch(`${this._baseUrl}/movies`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${token}`,
@@ -116,7 +116,7 @@ class MainApi {
   }
 
   deleteMovie(cardId, token) {
-    return fetch(`${this._url}/movies/${cardId}`, {
+    return fetch(`${this._baseUrl}/movies/${cardId}`, {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${token}`,
@@ -127,12 +127,12 @@ class MainApi {
   }
 }
 
-// const mainApi = new MainApi({
-//   baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
-// });
-
 const mainApi = new MainApi({
-  baseUrl: 'http://127.0.0.1:3000',
+  baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
 });
+
+// const mainApi = new MainApi({
+//   baseUrl: "http://127.0.0.1:3000",
+// });
 
 export default mainApi

@@ -3,27 +3,24 @@ import './App.css';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import mainApi from '../../utils/MainApi';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-
-
 
 function App() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
-  // const [isSend, setIsSend] = useState(false)
+  const [isSend, setIsSend] = useState(false)
   const [savedMovies, setSavedMovies] = useState([])
-  // const [isError, setIsError] = useState(false)
-  // const [isCheckToken, setIsCheckToken] = useState(true)
+  const [isError, setIsError] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
 
-  function handleRegister(username, email, password) {
-    // setIsSend(true)
-    mainApi.register(username, email, password)
+  function handleRegister(name, email, password) {
+    setIsSend(true)
+    mainApi.register(name, email, password)
       .then((res) => {
         if (res) {
           setIsLoggedIn(false)
@@ -32,36 +29,34 @@ function App() {
               localStorage.setItem('jwt', res.token)
               setIsLoggedIn(true)
               navigate('/movies')
-              // window.scrollTo(0, 0)
             })
             .catch((err) => {
-              // setIsError(true)
+              setIsError(true)
               console.error(`Ошибка при авторизации ${err}`)
             })
-            // .finally(() => setIsSend(false))
+            .finally(() => setIsSend(false))
         }
       })
       .catch((err) => {
-        // setIsError(true)
+        setIsError(true)
         console.error(`Ошибка при регистрации ${err}`)
       })
-      // .finally(() => setIsSend(false))
+      .finally(() => setIsSend(false))
   }
 
   function handleLogin(email, password) {
-    // setIsSend(true)
+    setIsSend(true)
     mainApi.authorize(email, password)
       .then(res => {
         localStorage.setItem('jwt', res.token)
         setIsLoggedIn(true)
         navigate('/movies')
-        // window.scrollTo(0, 0)
       })
       .catch((err) => {
-        // setIsError(true)
+        setIsError(true)
         console.error(`Ошибка при авторизации ${err}`)
       })
-      // .finally(() => setIsSend(false))
+      .finally(() => setIsSend(false))
   }
 
   function logOut() {
@@ -70,19 +65,17 @@ function App() {
     navigate('/')
   }
 
-  function editUserData(username, email) {
-    // setIsSend(true)
-    mainApi.setUserInfo(username, email, localStorage.jwt)
+  function editUserData(name, email) {
+    mainApi.setUserInfo(name, email, localStorage.jwt)
       .then(res => {
         setCurrentUser(res)
         setIsSuccess(true)
         setIsEdit(false)
       })
       .catch((err) => {
-        // setIsError(true)
+        setIsError(true)
         console.error(`Ошибка при редактировании данных пользователя ${err}`)
       })
-      // .finally(() => setIsSend(false))
   }
 
   function handleDeleteMovie(deletemovieId) {
@@ -196,8 +189,6 @@ function App() {
               isLoggedIn={isLoggedIn}
               logOut={logOut}
               editUserData={editUserData}
-              // isSuccess={isSuccess}
-              // setSuccess={setSuccess}
               setIsEdit={setIsEdit}
               isEdit={isEdit}
             />}

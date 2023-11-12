@@ -10,8 +10,6 @@ import Error from '../Error/Error'
 import Profile from '../Profile/Profile';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
-// import { movies, savedMovies } from '../../utils/constants'
-// import { useEffect, useState } from 'react';
 
 export default function Main({ 
   name, 
@@ -19,45 +17,13 @@ export default function Main({
   onLogin, 
   logOut,
   editUserData,
-  // setIsError,
+  setIsError,
   savedMovies,
   onDelete,
   addMovie,
-  // isSuccess,
-  // setSuccess,
   setIsEdit,
   isEdit
 }) {
-  // const [moviesAll, setMoviesAll] = useState([])
-  // const [saveMovie, setSaveMovie] = useState([])
-  // const [isCheckMoviesAll, setIsCheckMoviesAll] = useState(true)
-  // const [isCheckMoviesSave, setIsCheckMoviesSave] = useState(true)
-
-  // useEffect(() => {
-  //   setMoviesAll(movies)
-  //   setSaveMovie(savedMovies)
-  // }, [])
-
-  // function onCheckMoviesAll() {
-  //   if (isCheckMoviesAll) {
-  //     setIsCheckMoviesAll(false)
-
-  //     setMoviesAll(moviesAll.filter((element) => element.duration <= 40))
-  //   } else {
-  //     setIsCheckMoviesAll(true)
-  //     setMoviesAll(movies)
-  //   }
-  // }
-
-  // function onCheckMoviesSave() {
-  //   if (isCheckMoviesSave) {
-  //     setIsCheckMoviesSave(false)
-  //     setSaveMovie(saveMovie.filter((element) => element.duration <= 40))
-  //   } else {
-  //     setIsCheckMoviesSave(true)
-  //     setSaveMovie(savedMovies)
-  //   }
-  // }
 
   return (
     <main className="main">
@@ -77,9 +43,7 @@ export default function Main({
           name={name}
           logOut={logOut}
           editUserData={editUserData}
-          // setIsError={setIsError}
-          // isSuccess={isSuccess}
-          // setSuccess={setSuccess}
+          setIsError={setIsError}
           setIsEdit={setIsEdit}
           isEdit={isEdit} 
           />,

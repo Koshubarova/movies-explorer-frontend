@@ -9,17 +9,6 @@ export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies
   const [count, setCount] = useState(printCards().init)
   const fact = movies.slice(0, count)
 
-  // const BigScreen = 1280
-  // const MediumScreen = 1024
-  // const SmallScreen = 650
-  // const BigScreenInitMore = 16
-  // const BigScreenInitLess = 12
-  // const MediumScreenInit = 8
-  // const SmallScreenInit = 5
-  // const BigScreenStep = 4
-  // const MediumScreenStep = 3
-  // const SmallScreenStep = 2
-
   function printCards() {
     const counter = { init: 16, step: 4 }
     if (window.innerWidth < 1280) {

@@ -1,28 +1,25 @@
 import Input from "../Input/Input";
 import SectionLogin from "../SectionLogin/SectionLogin";
 import useFormValidation from '../../hooks/useFormValidation'
-// import { useNavigate } from "react-router-dom";
-
 
 export default function Register({ name, onRegister }) {
-  // const navigate = useNavigate()
   const { values, errors, isInputValid, isValid, handleChange } = useFormValidation()
 
   function onSubmit(evt) {
     evt.preventDefault()
-    onRegister(values.username, values.email, values.password)
+    onRegister(values.name, values.email, values.password)
   }
 
   return (
     <SectionLogin name={name} isValid={isValid} onSubmit={onSubmit}>
       <Input
-        name='username'
+        name='name'
         type='text'
         title='Имя'
         minLength = '2'
-        value={values.username}
-        isInputValid={isInputValid.username}
-        error={errors.username}
+        value={values.name}
+        isInputValid={isInputValid.name}
+        error={errors.name}
         onChange={handleChange}
         placeholder='Введите имя'
       />

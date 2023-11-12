@@ -4,10 +4,10 @@ import { useLocation } from 'react-router-dom'
 import useFormValidation from '../../hooks/useFormValidation'
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox'
 
-export default function SearchForm({ isCheck, changeShort, searchedMovie, searchMovies, firstEntrance, savedMovie }) {
+export default function SearchForm({ isCheck, changeShort, searchedMovie, searchMovies, savedMovie }) {
   const { pathname } = useLocation()
   const [isError,setIsError] = useState(false)
-  const {values, isValid, handleChange, reset} = useFormValidation()
+  const {values, handleChange, reset} = useFormValidation()
 
   useEffect(() => {
     if ((pathname === '/saved-movies' && savedMovie.length === 0)) {
@@ -28,16 +28,6 @@ export default function SearchForm({ isCheck, changeShort, searchedMovie, search
     }
   }
 
-  function onSubmit(evt) {
-    evt.preventDefault()
-    if (!isValid) {
-      setIsError(true)
-      return
-    } else {
-      setIsError(false)
-    }
-  }
-
   return (
     <section className="search">
       <div className="search__container">
@@ -45,17 +35,22 @@ export default function SearchForm({ isCheck, changeShort, searchedMovie, search
           noValidate
           className="search__form"
           name={"SearchForm"}
-          value={values.search}
           onSubmit={onSubmit}
         >
           <input
             type="text"
+            name='search'
             placeholder="Фильм"
             className="search__input"
+            value={values.search || ''}
             required
-            onChange={handleChange}
+            onChange={(evt) => {
+              handleChange(evt)
+              setIsError(false)
+            }}
+            disabled={savedMovie ? (savedMovie.length === 0 && true) : false}
           />
-          <button className="search__submit"></button>
+          <button type='submit' className="search__submit"></button>
         </form>
         <span className={`search__error ${isError && "search__error_active"}`}>
           {isError ? "Введите ключевое слово" : ""}

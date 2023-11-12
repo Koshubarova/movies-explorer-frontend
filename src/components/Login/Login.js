@@ -1,11 +1,8 @@
 import Input from "../Input/Input";
 import SectionLogin from "../SectionLogin/SectionLogin";
 import useFormValidation from '../../hooks/useFormValidation'
-// import { useNavigate } from "react-router-dom";
-
 
 export default function Login({ name, onLogin }) {
-  // const navigate = useNavigate()
   const { values, errors, isInputValid, isValid, handleChange, } = useFormValidation()
 
   function onSubmit(evt) {
