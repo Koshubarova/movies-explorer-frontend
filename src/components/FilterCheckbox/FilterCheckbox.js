@@ -1,13 +1,13 @@
 import './FilterCheckbox.css'
 
-export default function FilterCheckbox({ isCheck, changeShot }) {
+export default function FilterCheckbox({ isChecked, toggleShort }) {
   return (
     <label className="search__label-container">
       <div className="search__input-container">
         <input
           type="checkbox"
           className="search__check"
-          onChange={changeShot}
+          onChange={toggleShort}
         />
         <svg
           className="search__check-svg"
@@ -19,9 +19,7 @@ export default function FilterCheckbox({ isCheck, changeShot }) {
         >
           <g id="smalltumb">
             <rect
-              className={`search__check-svg-rect ${
-                isCheck ? "search__check-svg-rect_active" : ""
-              }`}
+              className={`search__check-svg-rect ${!isChecked ? "search__check-svg-rect_active" : ""}`}
               id="tumb__COLOR:tumbler-on"
               width="36"
               height="20"
@@ -29,9 +27,7 @@ export default function FilterCheckbox({ isCheck, changeShot }) {
               fill="#2BE080"
             />
             <circle
-              className={`search__check-svg-circle ${
-                isCheck ? "search__check-svg-circle_active" : ""
-              }`}
+              className={`search__check-svg-circle ${!isChecked ? "search__check-svg-circle_active" : ""}`}
               id="tumb__COLOR:tumbler-on-2"
               cx="26"
               cy="10"

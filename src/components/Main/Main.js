@@ -11,19 +11,7 @@ import Profile from '../Profile/Profile';
 import Movies from '../Movies/Movies';
 import SavedMovies from '../SavedMovies/SavedMovies';
 
-export default function Main({ 
-  name, 
-  onRegister, 
-  onLogin, 
-  logOut,
-  editUserData,
-  setIsError,
-  savedMovies,
-  onDelete,
-  addMovie,
-  setIsEdit,
-  isEdit
-}) {
+export default function Main({ name, onRegister, onLogin, setIsError, logOut, editUserInfo, addMovie, onDelete, savedMovies, isSuccess, setSuccess, isEdit, setIsEdit }) {
 
   return (
     <main className="main">
@@ -36,25 +24,26 @@ export default function Main({
             <AboutMe />
             <Portfolio />
           </>,
-        signin: <Login name={name} onLogin={onLogin} />,
-        signup: <Register name={name} onRegister={onRegister} />,
+        signin: <Login name={name} onLogin={onLogin} setIsError={setIsError} />,
+        signup: <Register name={name} onRegister={onRegister} setIsError={setIsError} />,
         error: <Error />,
         profile: <Profile 
-          name={name}
+          name={name} 
           logOut={logOut}
-          editUserData={editUserData}
+          editUserInfo={editUserInfo}
           setIsError={setIsError}
+          isSuccess={isSuccess}
+          setSuccess={setSuccess}
           setIsEdit={setIsEdit}
-          isEdit={isEdit} 
-          />,
+          isEdit={isEdit} />,
         movies:
-        <>
-        <Movies savedMovies={savedMovies} addMovie={addMovie} />
-      </>,
+          <>
+            <Movies savedMovies={savedMovies} addMovie={addMovie} setIsError={setIsError} />
+          </>,
         savedmovies:
-        <>
-        <SavedMovies savedMovie={savedMovies} onDelete={onDelete} />
-      </>
+          <>
+            <SavedMovies savedMovies={savedMovies} onDelete={onDelete} setIsError={setIsError} />
+          </>
       }[name]}
     </main>
   )

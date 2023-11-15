@@ -71,9 +71,12 @@
 
 .movies-cardlist__more_hidden {
   visibility: hidden;
+  .page__gallery {
+    padding: 70px 70px 80px;
+  }
 }
 
-.movies-cardlist__serch-error {
-  text-align: center;
-  color: #FFFFFF;
-}
+  .movies-cardlist__search-error {
+    text-align: center;
+    color: #FFFFFF;
+  }

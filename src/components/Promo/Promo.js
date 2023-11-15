@@ -1,5 +1,5 @@
-import { HashLink } from 'react-router-hash-link'
 import './Promo.css'
+import { HashLink } from 'react-router-hash-link'
 
 export default function Promo() {
 

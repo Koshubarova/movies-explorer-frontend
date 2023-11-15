@@ -5,15 +5,6 @@ class MoviesApi {
 
   _checkResponse(res) {return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);}
 
-  // _request(url, options) {
-  //   return fetch(`${this._url}${url}`, options)
-  //     .then(this._checkResponse)
-  // }
-
-  // getMovies() {
-  //   return this._request('/')
-  // }
-
   getMovies() {
     return fetch(`${this._baseUrl}`, {
 			method: "GET",

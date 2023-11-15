@@ -1,9 +1,8 @@
-import { useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './MoviesCard.css';
+import { useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
-export default function MoviesCard({ onDelete, addMovie, data, savedMovies }) {
+export default function MoviesCard({ data, savedMovies, onDelete, addMovie}) {
   const { pathname } = useLocation()
   const [click, setClick] = useState(false)
 
@@ -25,7 +24,7 @@ export default function MoviesCard({ onDelete, addMovie, data, savedMovies }) {
   function convertTime(duration) {
     const minutes = duration % 60;
     const hours = Math.floor(duration / 60);
-    return (hours === 0 ? `${minutes}м` : minutes === 0 ? `${hours}ч` : `${hours}ч${minutes}м`)
+    return `${hours}ч${minutes}м`
   }
 
   return (

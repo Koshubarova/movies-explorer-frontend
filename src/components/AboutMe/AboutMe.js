@@ -1,7 +1,7 @@
-import { Link } from "react-router-dom";
 import "./AboutMe.css";
 import photo from "../../images/profile-photo.png";
 import Wrapper from "../Wrapper/Wrapper";
+import { Link } from "react-router-dom";
 
 export default function AboutMe() {
   return (

@@ -1,21 +1,20 @@
-import MoviesCard from '../MoviesCard/MoviesCard'
 import './MoviesCardList.css'
-import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import MoviesCard from '../MoviesCard/MoviesCard'
+import { useState, useEffect } from 'react'
 import Preloader from '../Preloader/Preloader'
 
-export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies, isLoading, serverError, firstEntrance }) {
+export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies, isLoading, serverError }) {
   const { pathname } = useLocation()
-  const [count, setCount] = useState(printCards().init)
-  const fact = movies.slice(0, count)
+  const [count, setCount] = useState('')
+  const movieCards = movies.slice(0, count)
 
-  function printCards() {
-    const counter = { init: 16, step: 4 }
+  function postMovieCards() {
+    const counter = { init: 16, step: 4}
     if (window.innerWidth < 1280) {
       counter.init = 12
       counter.step = 3
-    }
-    if (window.innerWidth < 1024) {
+    }if (window.innerWidth < 1024) {
       counter.init = 8
       counter.step = 2
     }
@@ -28,53 +27,61 @@ export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies
 
   useEffect(() => {
     if (pathname === '/movies') {
-      setCount(printCards().init)
-      function printCardsForResize() {
+      setCount(postMovieCards().init)
+      function postMovieCardsForResize() {
         if (window.innerWidth >= 1280) {
-          setCount(printCards().init)
+          setCount(postMovieCards().init)
         }
         if (window.innerWidth < 1280) {
-          setCount(printCards().init)
+          setCount(postMovieCards().init)
         }
         if (window.innerWidth < 1024) {
-          setCount(printCards().init)
+          setCount(postMovieCards().init)
         }
         if (window.innerWidth < 650) {
-          setCount(printCards().init)
+          setCount(postMovieCards().init)
         }
       }
-      window.addEventListener('resize', printCardsForResize)
-      return () => window.removeEventListener('resize', printCardsForResize)
+      window.addEventListener('resize', postMovieCardsForResize)
+      return () => window.removeEventListener('resize', postMovieCardsForResize)
     }
   }, [pathname, movies])
 
   function clickMore() {
-    setCount(count + printCards().step)
+    setCount(count + postMovieCards().step)
   }
 
   return (
     <section className='movies-cardlist'>
       <ul className='movies-cardlist__lists'>
-      {isLoading ? <Preloader /> :
-          (pathname === '/movies' && fact.length !== 0) ?
-            fact.map(data => {
+        {isLoading ? <Preloader /> :
+          (pathname === '/movies' && movieCards.length !== 0) ?
+          movieCards.map(data => {
               return (
-                <MoviesCard key={data.id} savedMovies={savedMovies} addMovie={addMovie} data={data}
+                <MoviesCard
+                  key={data.id}
+                  savedMovies={savedMovies}
+                  addMovie={addMovie}
+                  data={data}
                 />
               )
             }) : movies.length !== 0 ?
               movies.map(data => {
                 return (
-                  <MoviesCard key={data._id} onDelete={onDelete} data={data}
+                  <MoviesCard
+                    key={data._id}
+                    onDelete={onDelete}
+                    data={data}
                   />
                 )
               }) : serverError ?
-                <span className='movies-cardlist__serch-error'>Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз</span>
-                :
-                <span className='movies-cardlist__serch-error'>Ничего не найдено</span>
-      }
+                <span className='movies-cardlist__search-error'>Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз
+                </span>
+                : 
+                <span className='movies-cardlist__search-error'>«Ничего не найдено»</span>
+        }
       </ul>
-      <button type='button' className={`movies-cardlist__more ${count >= movies.length && 'movies-cardlist__more_hidden'}`} onClick={clickMore}>Ёще</button>
+      {pathname === '/movies' && <button type='button' className={`movies-cardlist__more ${count >= movies.length && 'movies-cardlist__more_hidden'}`} onClick={clickMore}>Еще</button>}
     </section>
   )
 }

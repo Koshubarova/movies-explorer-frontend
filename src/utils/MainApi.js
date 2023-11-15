@@ -5,11 +5,6 @@ class MainApi {
 
   _checkResponse(res) {return res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);}
 
-  // _request(url, options) {
-  //   return fetch(`${this._url}${url}`, options)
-  //     .then(this._checkResponse)
-  // }
-
   register(name, email, password) {
     return fetch(`${this._baseUrl}/signup`, {
       method: 'POST',
@@ -115,8 +110,8 @@ class MainApi {
     .then(this._checkResponse);
   }
 
-  deleteMovie(cardId, token) {
-    return fetch(`${this._baseUrl}/movies/${cardId}`, {
+  deleteMovie(movieId, token) {
+    return fetch(`${this._baseUrl}/movies/${movieId}`, {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${token}`,
@@ -130,5 +125,9 @@ class MainApi {
 const mainApi = new MainApi({
   baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
 });
+
+// const mainApi = new MainApi({
+//   baseUrl: 'http://127.0.0.1:3001',
+// });
 
 export default mainApi

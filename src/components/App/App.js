@@ -1,48 +1,53 @@
-import { Navigate, useNavigate, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import mainApi from '../../utils/MainApi';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import ErrorContext from '../../contexts/ErrorContext';
+import SendContext from '../../contexts/SendContext';
+import Preloader from '../Preloader/Preloader';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
+import ProtectedPage from '../ProtectedPage/ProtectedPage';
 
 function App() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
+  const navigate = useNavigate()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isSend, setIsSend] = useState(false)
+  const [currentUser, setCurrentUser] = useState({})
   const [savedMovies, setSavedMovies] = useState([])
   const [isError, setIsError] = useState(false)
+  const [isCheckToken, setIsCheckToken] = useState(true)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
+  const [popup, setPopup] = useState(false)// попробовать сделать попап-уведомление
 
-  function handleRegister(name, email, password) {
-    setIsSend(true)
-    mainApi.register(name, email, password)
-      .then((res) => {
-        if (res) {
-          setIsLoggedIn(false)
-          mainApi.authorize(email, password)
-            .then(res => {
-              localStorage.setItem('jwt', res.token)
-              setIsLoggedIn(true)
-              navigate('/movies')
-            })
-            .catch((err) => {
-              setIsError(true)
-              console.error(`Ошибка при авторизации ${err}`)
-            })
-            .finally(() => setIsSend(false))
-        }
-      })
-      .catch((err) => {
-        setIsError(true)
-        console.error(`Ошибка при регистрации ${err}`)
-      })
-      .finally(() => setIsSend(false))
-  }
+  useEffect(() => {
+    if (localStorage.jwt) {
+      Promise.all([mainApi.getUserInfo(localStorage.jwt), mainApi.getMovies(localStorage.jwt)])
+        .then(([userData, dataMovies]) => {
+          setSavedMovies(dataMovies.reverse())
+          setCurrentUser(userData)
+          setIsLoggedIn(true)
+          setIsCheckToken(false)
+        })
+        .catch((err) => {
+          console.error(`Ошибка при загрузке начальных данных ${err}`)
+          setIsCheckToken(false)
+          localStorage.clear()
+        })
+    } else {
+      setIsLoggedIn(false)
+      setIsCheckToken(false)
+      localStorage.clear()
+    }
+  }, [isLoggedIn])
+
+  const setSuccess = useCallback(() => {
+    setIsSuccess(false)
+  }, [])
 
   function handleLogin(email, password) {
     setIsSend(true)
@@ -59,14 +64,31 @@ function App() {
       .finally(() => setIsSend(false))
   }
 
+  function handleRegister(username, email, password) {
+    setIsSend(true)
+    mainApi.register(username, email, password)
+      .then((res) => {
+        if (res) {
+          setIsLoggedIn(false)
+          handleLogin(email, password)
+        }
+      })
+      .catch((err) => {
+        setIsError(true)
+        console.error(`Ошибка при регистрации ${err}`)
+      })
+      .finally(() => setIsSend(false))
+  }
+
   function logOut() {
     localStorage.clear()
     setIsLoggedIn(false)
     navigate('/')
   }
 
-  function editUserData(name, email) {
-    mainApi.setUserInfo(name, email, localStorage.jwt)
+  function editUserInfo(username, email) {
+    setIsSend(true)
+    mainApi.setUserInfo(username, email, localStorage.jwt)
       .then(res => {
         setCurrentUser(res)
         setIsSuccess(true)
@@ -76,6 +98,7 @@ function App() {
         setIsError(true)
         console.error(`Ошибка при редактировании данных пользователя ${err}`)
       })
+      .finally(() => setIsSend(false))
   }
 
   function handleDeleteMovie(deletemovieId) {
@@ -86,7 +109,7 @@ function App() {
       .catch((err) => console.error(`Ошибка при удалении фильма ${err}`))
   }
 
-  function handleToggelMovie(data) {
+  function handleSaveMovie(data) {
     const isAdd = savedMovies.some(element => data.id === element.movieId)
     const seachClickMovie = savedMovies.filter((movie) => {
       return movie.movieId === data.id
@@ -98,113 +121,95 @@ function App() {
         .then(res => {
           setSavedMovies([res, ...savedMovies])
         })
-        .catch((err) => console.error(`Ошибка при установке лайка ${err}`))
+        .catch((err) => console.error(`Ошибка при сохранении фильма ${err}`))
     }
   }
 
-  useEffect(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt) {
-      mainApi.checkToken(jwt);
-      mainApi.getUserInfo()
-        .then(({name, email}) => {
-          setCurrentUser((prev) => ({...prev, name: name, email: email, isLoggedIn: true}))
-        })
-        .catch((e) => console.log(e))
-    }
-  }, [])
-
   return (
-    <div className="page">
-      <CurrentUserContext.Provider value={currentUser}>
-        <Routes>
-          <Route 
-            path='/signin' 
-            element={
-              isLoggedIn ? <Navigate to='/movies' replace /> :
-              <Main name='signin' onLogin={handleLogin}/>} 
-          />
+    <CurrentUserContext.Provider value={currentUser}>
+      <SendContext.Provider value={isSend}>
+        <ErrorContext.Provider value={isError}>
+          <div className="page">
+          {isCheckToken ? <Preloader /> :
 
-          <Route 
-            path='/signup' 
-            element={isLoggedIn ? <Navigate to='/movies' replace /> :
-            <Main name='signup' onRegister={handleRegister} />} 
-          />
+            <Routes>
+              <Route 
+                path='/signin' 
+                element={isLoggedIn ? <Navigate to='/movies' replace /> :
+                  <Main name='signin' onLogin={handleLogin} setIsError={setIsError} />}
+              />
 
-          <Route 
-            path='/' 
-            element={
-              <>
-                <Header name='home' isLoggedIn={isLoggedIn}/>
-                <Main name='home' />
-                <Footer />
-              </>
-            } 
-          />
+              <Route 
+                path='/signup' 
+                element={isLoggedIn ? <Navigate to='/movies' replace /> :
+                  <Main name='signup' onRegister={handleRegister} setIsError={setIsError} />} 
+              />
 
-          <Route 
-            path='/movies' 
-            element={<ProtectedRoute
-              element={
-                <>
-                  <Header />
-                  <Main name='movies' />
-                  <Footer />
-                </>
-              } 
-              name='movies'
-              savedMovies={savedMovies}
-              addMovie={handleToggelMovie}
-              isLoggedIn={isLoggedIn}
-            />}
-          />
+              <Route 
+                path='/' 
+                element={
+                  <>
+                    <Header name='home' isLoggedIn={isLoggedIn}/>
+                    <Main name='home' />
+                    <Footer />
+                  </>
+                } 
+              />
 
-          <Route 
-            path='/saved-movies' 
-            element={<ProtectedRoute
-              element={
-                <>
-                  <Header />
-                  <Main name='savedmovies' />
-                  <Footer />
-                </>
-              } 
-              name='savedmovies'
-              onDelete={handleDeleteMovie}
-              savedMovies={savedMovies}
-              isLoggedIn={isLoggedIn}
-            />}
-          />
+              <Route 
+                path='/movies' 
+                element={<ProtectedRoute
+                  element={ProtectedPage}
+                  savedMovies={savedMovies}
+                  addMovie={handleSaveMovie}
+                  name='movies'
+                  isLoggedIn={isLoggedIn}
+                  setIsError={setIsError}
+                />}
+              />
 
-          <Route 
-            path='/profile' 
-            element={<ProtectedRoute
-              element={
-              <>
-                <Header />
-                <Main name='profile' setIsLoggedIn={setIsLoggedIn}/>
-              </>
-              } 
-              name='profile'
-              isLoggedIn={isLoggedIn}
-              logOut={logOut}
-              editUserData={editUserData}
-              setIsEdit={setIsEdit}
-              isEdit={isEdit}
-            />}
-          />
+              <Route 
+                path='/saved-movies' 
+                element={<ProtectedRoute
+                  element={ProtectedPage}
+                  savedMovies={savedMovies}
+                  onDelete={handleDeleteMovie}
+                  name='savedmovies'
+                  isLoggedIn={isLoggedIn}
+                  setIsError={setIsError}
+                />}
+              />
 
-          <Route 
-            path='*' 
-            element={
-              <>
-                <Main name='error' />
-              </>
-            } 
-          />
-        </Routes>
-      </CurrentUserContext.Provider>
-    </div>
+              <Route 
+                path='/profile' 
+                element={<ProtectedRoute
+                  element={ProtectedPage}
+                  logOut={logOut}
+                  name='profile'
+                  isLoggedIn={isLoggedIn}
+                  editUserInfo={editUserInfo}
+                  setIsError={setIsError}
+                  isSuccess={isSuccess}
+                  setSuccess={setSuccess}
+                  setIsEdit={setIsEdit}
+                  isEdit={isEdit}
+                />}
+              />
+
+              <Route 
+                path='*' 
+                element={
+                  <>
+                    <Main name='error' />
+                  </>
+                } 
+              />
+            </Routes>
+          }
+          </div>
+        </ErrorContext.Provider>
+      </SendContext.Provider>
+    </CurrentUserContext.Provider>
   );
 }
 

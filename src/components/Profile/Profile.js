@@ -1,32 +1,34 @@
 import './Profile.css'
-import { Link } from 'react-router-dom'
 import Form from '../Form/Form'
 import Input from '../Input/Input'
 import useFormValidation from '../../hooks/useFormValidation'
-import { useEffect, useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import CurrentUserContext from '../../contexts/CurrentUserContext'
 
-export default function Profile({ name, logOut, editUserData, setIsEdit, isEdit }) {
+export default function Profile({ name, logOut, editUserInfo, setIsError, isSuccess, setSuccess, isEdit, setIsEdit }) {
   const currentUser = useContext(CurrentUserContext);
   const { values, errors, isInputValid, isValid, handleChange, reset } = useFormValidation()
 
   useEffect(() => {
-    reset({ username: currentUser.name, email: currentUser.email})
+    reset({username: currentUser.name, email: currentUser.email})
   }, [reset, currentUser, isEdit])
 
   function onSubmit(evt) {
     evt.preventDefault();
-    editUserData(values.username, values.email)
+    editUserInfo(values.username, values.email)
   }
-
+  
   return (
     <section className="profile">
-      <h2 className='profile__title'>{`Привет, ${currentUser.name}!`}</h2>
+      <h2 className='profile__title'>{`Привет, ${currentUser.name}`}</h2>
       <Form
         name={name}
         isValid={isValid}
         onSubmit={onSubmit}
+        setIsError={setIsError}
         values={values}
+        isSuccess={isSuccess}
+        setSuccess={setSuccess}
         setIsEdit={setIsEdit}
         isEdit={isEdit}
       >
@@ -51,10 +53,11 @@ export default function Profile({ name, logOut, editUserData, setIsEdit, isEdit 
           isInputValid={isInputValid.email}
           error={errors.email}
           onChange={handleChange}
+          pattern={"^\\S+@\\S+\\.\\S+$"}
           isEdit={isEdit}
         />
       </Form>
-      <Link to={'/'} onClick={logOut} className='profile__link'>Выйти из аккаунта</Link>
+      <button onClick={logOut} className='profile__button'>Выйти из аккаунта</button>
     </section>
   )
 }

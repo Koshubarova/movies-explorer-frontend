@@ -38,9 +38,11 @@
   }
 }
 
-.profile__link {
+.profile__button {
+  margin: auto;
   margin-top: 16px;
-  width: 100%;
+  background-color: transparent;
+  border: none;
   color: #EE3465;
   display: block;
   text-align: center;
@@ -52,13 +54,14 @@
 }
 
 @media screen and (max-width: 525px) {
-  .profile__link{
+  .profile__button{
     font-size: 12px;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .profile__link:hover {
+  .profile__button:hover {
     opacity: 0.7;
+    cursor: pointer;
   }
 }

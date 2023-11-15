@@ -4,23 +4,22 @@ import { useCallback, useState } from "react";
 import moviesApi from '../../utils/MoviesApi';
 import { useEffect } from "react";
 
-export default function Movies({ addMovie, savedMovies }) {
+export default function Movies({ addMovie, savedMovies, setIsError }) {
   const [allMovies, setAllMovies] = useState([])
-  const [filteredMovies, setFilteredMovies] = useState([])
-  const [searchedMouvie, setSearchedMovie] = useState('')
-  const [isCheck, setIsCheck] = useState(false)
+  const [filteredMovies, setFilteredMovies] = useState([]) 
+  const [searchRequest, setSearchRequest] = useState('')
+  const [isChecked, setIsChecked] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [serverError, setServerError] = useState(false)
-  const [firstEntrance, setFirstEntrance] = useState(true)
 
-  const filter = useCallback((search, isCheck, movies) => {
-    setSearchedMovie(search)
+  const filter = useCallback((search, isChecked, movies) => {
+    setSearchRequest(search)
     localStorage.setItem('movie', JSON.stringify(search))
-    localStorage.setItem('shorts', JSON.stringify(isCheck))
+    localStorage.setItem('shorts', JSON.stringify(isChecked))
     localStorage.setItem('allmovies', JSON.stringify(movies))
     setFilteredMovies(movies.filter((movie) => {
       const searchName = movie.nameRU.toLowerCase().includes(search.toLowerCase())
-      return isCheck ? (searchName && movie.duration <= 40) : searchName
+      return isChecked ? (searchName && movie.duration <= 40) : searchName
     }))
   }, [])
 
@@ -30,18 +29,17 @@ export default function Movies({ addMovie, savedMovies }) {
       moviesApi.getMovies()
         .then((res) => {
           setAllMovies(res)
-          setIsCheck(false)
+          setIsChecked(false)
           setServerError(false)
-          setFirstEntrance(false)
-          filter(search, isCheck, res)
+          filter(search, isChecked, res)
         })
         .catch(err => {
           setServerError(true)
-          console.error(`Ошибка при поске фильмов ${err}`)
+          console.error(`Ошибка при поиске фильмов ${err}`)
         })
         .finally(() => setIsLoading(false))
     } else {
-      filter(search, isCheck, allMovies)
+      filter(search, isChecked, allMovies)
     }
   }
 
@@ -49,24 +47,23 @@ export default function Movies({ addMovie, savedMovies }) {
     if (localStorage.allmovies && localStorage.shorts && localStorage.movie) {
       const movies = JSON.parse(localStorage.allmovies)
       const search = JSON.parse(localStorage.movie)
-      const isCheck = JSON.parse(localStorage.shorts)
+      const isChecked = JSON.parse(localStorage.shorts)
       setServerError(false)
-      setFirstEntrance(false)
-      setSearchedMovie(search)
-      setIsCheck(isCheck)
+      setSearchRequest(search)
+      setIsChecked(isChecked)
       setAllMovies(movies)
-      filter(search, isCheck, movies)
+      filter(search, isChecked, movies)
     }
   }, [filter])
 
-  function changeShort() {
-    if (isCheck) {
-      setIsCheck(false)
-      filter(searchedMouvie, false, allMovies)
+  function toggleShort() {
+    if (isChecked) {
+      setIsChecked(false)
+      filter(searchRequest, false, allMovies)
       localStorage.setItem('shorts', JSON.stringify(false))
     } else {
-      setIsCheck(true)
-      filter(searchedMouvie, true, allMovies)
+      setIsChecked(true)
+      filter(searchRequest, true, allMovies)
       localStorage.setItem('shorts', JSON.stringify(true))
     }
   }
@@ -74,12 +71,11 @@ export default function Movies({ addMovie, savedMovies }) {
   return (
     <>
       <SearchForm
-        isCheck={isCheck}
+        isChecked={isChecked}
         searchMovies={searchMovies}
-        searchedMovie={searchedMouvie}
-        changeShort={changeShort}
-        // setIsError={setIsError}
-        firstEntrance={firstEntrance}
+        searchRequest={searchRequest}
+        toggleShort={toggleShort}
+        setIsError={setIsError}
       />
       <MoviesCardList
         movies={filteredMovies}
@@ -87,7 +83,6 @@ export default function Movies({ addMovie, savedMovies }) {
         savedMovies={savedMovies}
         isLoading={isLoading}
         serverError={serverError}
-        firstEntrance={firstEntrance}
       />
     </>
   )

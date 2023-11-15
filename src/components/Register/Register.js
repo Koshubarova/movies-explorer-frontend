@@ -1,26 +1,28 @@
 import Input from "../Input/Input";
 import SectionLogin from "../SectionLogin/SectionLogin";
-import useFormValidation from '../../hooks/useFormValidation'
+import useFormValidation from '../../hooks/useFormValidation';
 
-export default function Register({ name, onRegister }) {
+export default function Register({ name, onRegister, setIsError }) {
   const { values, errors, isInputValid, isValid, handleChange } = useFormValidation()
 
   function onSubmit(evt) {
     evt.preventDefault()
-    onRegister(values.name, values.email, values.password)
+    onRegister(values.username, values.email, values.password)
   }
 
   return (
-    <SectionLogin name={name} isValid={isValid} onSubmit={onSubmit}>
+    <SectionLogin name={name} isValid={isValid} onSubmit={onSubmit} setIsError={setIsError}>
       <Input
-        name='name'
+        name='username'
         type='text'
         title='Имя'
-        minLength = '2'
-        value={values.name}
-        isInputValid={isInputValid.name}
-        error={errors.name}
-        onChange={handleChange}
+        minLength = '3'
+        value={values.username}
+        isInputValid={isInputValid.username}
+        error={errors.username}
+        onChange={(evt) => {
+          handleChange(evt)
+          setIsError(false)}}
         placeholder='Введите имя'
       />
       <Input
@@ -30,7 +32,11 @@ export default function Register({ name, onRegister }) {
         value={values.email}
         isInputValid={isInputValid.email}
         error={errors.email}
-        onChange={handleChange}
+        onChange={(evt) => {
+          handleChange(evt)
+          setIsError(false)
+        }}
+        pattern={"^\\S+@\\S+\\.\\S+$"}
         placeholder='Введите электронную почту'
       />
       <Input
@@ -41,7 +47,10 @@ export default function Register({ name, onRegister }) {
         value={values.password}
         isInputValid={isInputValid.password}
         error={errors.password}
-        onChange={handleChange}
+        onChange={(evt) => {
+          handleChange(evt)
+          setIsError(false)
+        }}
         placeholder='Введите пароль'
       />
     </SectionLogin>

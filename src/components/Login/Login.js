@@ -2,7 +2,8 @@ import Input from "../Input/Input";
 import SectionLogin from "../SectionLogin/SectionLogin";
 import useFormValidation from '../../hooks/useFormValidation'
 
-export default function Login({ name, onLogin }) {
+
+export default function Login({ name, onLogin, setIsError }) {
   const { values, errors, isInputValid, isValid, handleChange, } = useFormValidation()
 
   function onSubmit(evt) {
@@ -11,7 +12,7 @@ export default function Login({ name, onLogin }) {
   }
 
   return (
-    <SectionLogin name={name} isValid={isValid} onSubmit={onSubmit}>
+    <SectionLogin name={name} isValid={isValid} onSubmit={onSubmit} setIsError={setIsError}>
       <Input
         name='email'
         type='email'
@@ -19,7 +20,10 @@ export default function Login({ name, onLogin }) {
         value={values.email}
         isInputValid={isInputValid.email}
         error={errors.email}
-        onChange={handleChange}
+        onChange={(evt) => {
+          handleChange(evt)
+          setIsError(false)
+        }}
         placeholder='Введите электронную почту'
       />
       <Input
@@ -30,7 +34,10 @@ export default function Login({ name, onLogin }) {
         value={values.password}
         isInputValid={isInputValid.password}
         error={errors.password}
-        onChange={handleChange}
+        onChange={(evt) => {
+          handleChange(evt)
+          setIsError(false)
+        }}
         placeholder='Введите пароль'
       />
     </SectionLogin>

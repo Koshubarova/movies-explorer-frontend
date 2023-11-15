@@ -1,6 +1,6 @@
+import './Header.css'
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
-import './Header.css'
 
 export default function Header({ name, isLoggedIn }) {
   const { pathname } = useLocation()
@@ -32,11 +32,11 @@ export default function Header({ name, isLoggedIn }) {
   }, [isOpen])
 
   return (
-    <header className={`header page__header ${name !== 'home' ? 'page__header_type_page' : ''}`}>
+    <header className={`header ${name !== 'home' ? 'header_type_page' : ''}`}>
       <div>
         <Link to={'/'} className="header__link-home"></Link>
       </div>
-      {name === 'home' && ! isLoggedIn ?
+      {name === 'home' && !isLoggedIn ?
         <nav>
           <ul className='header__links-container'>
             <li>
