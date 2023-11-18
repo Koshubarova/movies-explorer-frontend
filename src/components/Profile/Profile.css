@@ -2,6 +2,7 @@
   margin: 0 auto;
   padding-top: 74px;
   max-width: 410px;
+  width: 410px;
 }
 
 @media screen and (max-width: 768px) {
@@ -14,6 +15,7 @@
   .profile {
     padding-top: 70px;
     max-width: 260px;
+    width: 260px;
   }
 }
 
@@ -35,6 +37,119 @@
 @media screen and (max-width: 525px) {
   .profile__title {
     margin-bottom: 79px;
+  }
+}
+
+.profile__label {
+  width: 100%;
+  padding-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #424242;
+}
+
+.profile__label:last-of-type {
+  border-bottom: none
+}
+
+.profile__subtitle {
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.profile__input {
+  width: 70%;
+  color: #FFFFFF;
+  text-align: right;
+  background-color: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.profile__input:focus {
+  outline: 1px solid #4285F4;
+}
+
+.profile__input_invalid {
+  color: #EE3465;
+}
+
+.profile__error {
+  min-height: 16px;
+  color: #EE3465;
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.profile__error_type_name {
+  margin-bottom: 17px;
+}
+
+.profile__edit {
+  margin: 186px 0 0 0;
+  padding: 0;
+  width: 100%;
+  color: #FFFFFF;
+  display: block;
+  border: none;
+  background-color: transparent;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+  transition: opacity .5s linear;
+}
+
+@media screen and (max-width: 525px) {
+  .profile__edit {
+    font-size: 12px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile__edit:hover {
+    opacity: 0.7;
+  }
+}
+
+.profile__submit {
+  margin: 186px 0 0 0;
+  padding: 0;
+  width: 100%;
+  min-height: 45px;
+  color: #FFFFFF;
+  background-color: #4285F4;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  transition: background-color .5s linear;
+}
+
+@media screen and (max-width: 525px) {
+  .profile__submit {
+    font-size: 12px;
+  }
+}
+
+.profile__submit_disabled {
+  color: #C2C2C2;
+  background-color: #F8F8F8;
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile__submit:hover {
+    background-color: rgba(66, 133, 244, .8);
   }
 }
 

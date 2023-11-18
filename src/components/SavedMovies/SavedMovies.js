@@ -2,7 +2,7 @@ import SearchForm from "../SearchForm/SearchForm";
 import MoviesCardList from "../MoviesCardList/MoviesCardList";
 import { useCallback, useEffect, useState } from "react";
 
-export default function SavedMovies({ savedMovies, onDelete, setIsError }) {
+export default function SavedMovies({ savedMovies, setSavedMovies, onDelete, setIsError }) {
 
   const [filteredMovies, setFilteredMovies] = useState(savedMovies)
   const [searchRequest, setSearchRequest] = useState('')
@@ -47,6 +47,7 @@ export default function SavedMovies({ savedMovies, onDelete, setIsError }) {
       <MoviesCardList
         movies={filteredMovies}
         onDelete={onDelete}
+        setSavedMovies={setSavedMovies}
       />
     </>
   )

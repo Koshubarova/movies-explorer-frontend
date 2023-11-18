@@ -51,7 +51,7 @@ class MainApi {
     .then(this._checkResponse);
   }
 
-  getMovies(token) {
+  getSavedMovies(token) {
     return fetch(`${this._baseUrl}/movies`, {
       headers: {
         "Authorization" : `Bearer ${token}`,
@@ -122,12 +122,12 @@ class MainApi {
   }
 }
 
-const mainApi = new MainApi({
-  baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
-});
-
 // const mainApi = new MainApi({
-//   baseUrl: 'http://127.0.0.1:3001',
+//   baseUrl: 'https://api.koshubarova.movies.nomoredomainsrocks.ru',
 // });
+
+const mainApi = new MainApi({
+  baseUrl: 'http://127.0.0.1:3001',
+});
 
 export default mainApi

@@ -1,40 +1,47 @@
 import './SearchForm.css'
-import { useContext, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import useFormValidation from '../../hooks/useFormValidation'
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox'
-import ErrorContext from '../../contexts/ErrorContext'
 
-export default function SearchForm({ isChecked, toggleShort, searchRequest, searchMovies, setIsError, savedMovies }) {
+export default function SearchForm({ 
+  isChecked, 
+  toggleShort, 
+  searchMovies, 
+  setIsError 
+}) {
   const { pathname } = useLocation();
-  const isError = useContext(ErrorContext);
-  const {values, handleChange, reset} = useFormValidation()
+  const [request, setRequest] = useState('');
+  const [emptyRequest, setEmptyRequest] = useState(false);
+
+  function handleCheck(e) {
+    setRequest(e.target.value);
+  }
 
   useEffect(() => {
-    if ((pathname === '/saved-movies' && savedMovies.length === 0)) {
-      reset({ search: '' })
-    } else {
-      reset({ search: searchRequest })
+    if (pathname === '/movies' && localStorage.getItem('moviesSearch')) {
+      const localQuery = localStorage.getItem('moviesSearch');
+      setRequest(localQuery);
     }
-    setIsError(false)
-  }, [searchRequest, reset, setIsError, pathname, savedMovies])
+  }, [pathname]);
 
-  function onSubmit(evt) {
-    evt.preventDefault()
-    if (evt.target.search.value) {
-      searchMovies(evt.target.search.value)
-      setIsError(false)
+  function onSubmit(e) {
+    e.preventDefault()
+    if (request.trim().length !== 0) {
+      searchMovies(request);
+      setIsError(false);
+      setEmptyRequest(false);
     } else {
-      setIsError(true)
+      setIsError(true);
+      setEmptyRequest(true);
     }
   }
 
   return (
-    <section className="search">
-      <div className="search__container">
+    <section className="search-form">
+      <div className="search-form__container">
         <form
           noValidate
-          className="search__form"
+          className="search-form__form"
           name={"SearchForm"}
           onSubmit={onSubmit}
         >
@@ -42,19 +49,17 @@ export default function SearchForm({ isChecked, toggleShort, searchRequest, sear
             type="text"
             name='search'
             placeholder="Фильм"
-            className="search__input"
+            className="search-form__input"
             required
-            onChange={(evt) => {
-              handleChange(evt)
-              setIsError(false)}}
-            value={values.search || ''}
-            disabled={savedMovies ? (savedMovies.length === 0 && true) : false}
+            onChange={handleCheck}
+            value={request}
           />
-          <button type='submit' className="search__submit"></button> 
+          <button type='submit' className="search-form__submit"></button> 
         </form>
-        <span className={`search__error ${isError && "search__error_active"}`}>
-          {isError ? "Нужно ввести ключевое слово" : ""}
-        </span>
+        {emptyRequest && 
+        <span className={'search-form__error search-form__error_active'}>
+          Нужно ввести ключевое слово
+        </span>}
         <FilterCheckbox isChecked={isChecked} toggleShort={toggleShort} />
       </div>
     </section>

@@ -1,9 +1,9 @@
-.search {
+.search-form {
   padding: 70px 70px 0;
 }
 
 @media screen and (max-width:1023px) {
-  .search {
+  .search-form {
     padding-top: 80px;
     padding-left: 30px;
     padding-right: 30px;
@@ -11,14 +11,14 @@
 }
 
 @media screen and (max-width:767px) {
-  .search {
+  .search-form {
     padding-top: 78px;
     padding-left: 14px;
     padding-right: 14px;
   }
 }
 
-.search__container {
+.search-form__container {
   padding-bottom: 46px;
   width: 100%;
   display: flex;
@@ -27,12 +27,12 @@
 }
 
 @media screen and (max-width: 525px) {
-  .search__container {
+  .search-form__container {
     padding-bottom: 39px;
   }
 }
 
-.search__form {
+.search-form__form {
   margin-bottom: 16px;
   padding-bottom: 11px;
   width: 100%;
@@ -43,21 +43,21 @@
 }
 
 @media screen and (max-width: 768px) {
-  .search__form {
+  .search-form__form {
     margin-right: 0px;
     margin-bottom: 13px;
   }
 }
 
 @media screen and (max-width: 525px) {
-  .search__form {
+  .search-form__form {
     margin-bottom: 21px;
     padding-top: 6px;
     padding-bottom: 9px;
   }
 }
 
-.search__input {
+.search-form__input {
   width: 90%;
   color: #8B8B8B;
   background-color: transparent;
@@ -68,18 +68,18 @@
 }
 
 @media screen and (max-width: 525px) {
-  .search__input {
+  .search-form__input {
     font-size: 18px;
     font-weight: 500;
     line-height: normal;
   }
 }
 
-.search__input:focus {
+.search-form__input:focus {
   outline: 0.2px solid #4285F4;
 }
 
-.search__submit {
+.search-form__submit {
   padding: 0;
   width: 34px;
   height: 34px;
@@ -93,12 +93,12 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .search__submit:hover {
+  .search-form__submit:hover {
     opacity: 0.7;
   }
 }
 
-.search__error {
+.search-form__error {
   min-height: 14px;
   color: #FF004C;
   visibility: hidden;
@@ -108,12 +108,12 @@
   line-height: normal;
 }
 
-.search__error_active {
+.search-form__error_active {
   visibility: visible;
 }
 
 @media screen and (max-width: 525px) {
-  .search__error {
+  .search-form__error {
     margin-bottom: 3px;
   }
 }

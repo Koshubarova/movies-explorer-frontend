@@ -3,8 +3,15 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import { useCallback, useState } from "react";
 import moviesApi from '../../utils/MoviesApi';
 import { useEffect } from "react";
+import Preloader from '../Preloader/Preloader';
 
-export default function Movies({ addMovie, savedMovies, setIsError }) {
+export default function Movies({ 
+  addMovie, 
+  savedMovies, 
+  setIsError, 
+  isPreloader, 
+  setSavedMovies 
+}) {
   const [allMovies, setAllMovies] = useState([])
   const [filteredMovies, setFilteredMovies] = useState([]) 
   const [searchRequest, setSearchRequest] = useState('')
@@ -26,7 +33,7 @@ export default function Movies({ addMovie, savedMovies, setIsError }) {
   function searchMovies(search) {
     if (allMovies.length === 0) {
       setIsLoading(true)
-      moviesApi.getMovies()
+      moviesApi.getAllMovies()
         .then((res) => {
           setAllMovies(res)
           setIsChecked(false)
@@ -77,13 +84,17 @@ export default function Movies({ addMovie, savedMovies, setIsError }) {
         toggleShort={toggleShort}
         setIsError={setIsError}
       />
+      {isLoading ? (
+      <Preloader/> ) : (
       <MoviesCardList
         movies={filteredMovies}
         addMovie={addMovie}
         savedMovies={savedMovies}
         isLoading={isLoading}
         serverError={serverError}
+        setSavedMovies={setSavedMovies}
       />
+      )}
     </>
   )
 }

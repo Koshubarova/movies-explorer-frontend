@@ -3,69 +3,112 @@ import Header from '../Header/Header';
 import Main from '../Main/Main';
 import Footer from '../Footer/Footer';
 import { useState, useEffect, useCallback } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import mainApi from '../../utils/MainApi';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
-import ErrorContext from '../../contexts/ErrorContext';
-import SendContext from '../../contexts/SendContext';
 import Preloader from '../Preloader/Preloader';
 import ProtectedRoute from '../ProtectedRoute/ProtectedRoute';
-import ProtectedPage from '../ProtectedPage/ProtectedPage';
+import Movies from '../Movies/Movies';
+import SavedMovies from '../SavedMovies/SavedMovies';
+import Profile from '../Profile/Profile';
+import ErrorPage from '../ErrorPage/ErrorPage';
+import Login from '../Login/Login';
+import Register from '../Register/Register';
+import InfoTooltip from '../InfoTooltip/InfoTooltip';
 
 function App() {
   const navigate = useNavigate()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isSend, setIsSend] = useState(false)
+  const { pathname } = useLocation()
+
   const [currentUser, setCurrentUser] = useState({})
+  const [userInfo, setUserInfo] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false) //состояние авторизации
+  const [isError, setIsError] = useState(false) //состояние ошибки
+  // const [preloader, setPreloader] = useState(false) //прелоадер
+  const [responseSuccess, setResponseSuccess] = useState(null);
+  const [responseError, setResponseError] = useState(null);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false); //попап ошибки/успеха
+  const [isErrorUser, setIsErrorUser] = useState(true)
   const [savedMovies, setSavedMovies] = useState([])
-  const [isError, setIsError] = useState(false)
-  const [isCheckToken, setIsCheckToken] = useState(true)
-  const [isSuccess, setIsSuccess] = useState(false)
+  // const [moviesList, setMoviesList] = useState([])
+
+
+  const [isSend, setIsSend] = useState(false)
+  // const [isCheckToken, setIsCheckToken] = useState(true)
+  // const [isSuccess, setIsSuccess] = useState(false)
   const [isEdit, setIsEdit] = useState(false)
-  const [popup, setPopup] = useState(false)// попробовать сделать попап-уведомление
+  const [isLoading, setIsLoading] = useState(false) //прелоадер
+
+  //функция открытия попапа
+  function openInfoTooltip() { 
+    setIsInfoTooltipOpen(true); 
+  } 
+
+  //функция закрытия попапа
+  function closeInfoTooltip() { 
+    setIsInfoTooltipOpen(false) 
+  }
+
+  useEffect(() => {
+		setIsError("");
+	}, [pathname]);
 
   useEffect(() => {
     if (localStorage.jwt) {
-      Promise.all([mainApi.getUserInfo(localStorage.jwt), mainApi.getMovies(localStorage.jwt)])
+      Promise.all([mainApi.getUserInfo(localStorage.jwt), mainApi.getSavedMovies(localStorage.jwt)])
         .then(([userData, dataMovies]) => {
-          setSavedMovies(dataMovies.reverse())
+          setSavedMovies(dataMovies)
           setCurrentUser(userData)
           setIsLoggedIn(true)
-          setIsCheckToken(false)
         })
         .catch((err) => {
           console.error(`Ошибка при загрузке начальных данных ${err}`)
-          setIsCheckToken(false)
           localStorage.clear()
         })
     } else {
       setIsLoggedIn(false)
-      setIsCheckToken(false)
       localStorage.clear()
     }
   }, [isLoggedIn])
 
-  const setSuccess = useCallback(() => {
-    setIsSuccess(false)
+  useEffect(() => {
+    checkToken();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  function checkToken() {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      mainApi.checkToken(jwt)
+        .then((res) => {
+          setIsLoggedIn(true);
+          setUserInfo(res.name, res.email);
+          navigate("/", {replace: true})
+        })
+        .catch((err) => {
+          setIsLoggedIn(false);
+          console.log(err);
+        });
+    };
+  }
+
   function handleLogin(email, password) {
-    setIsSend(true)
     mainApi.authorize(email, password)
       .then(res => {
         localStorage.setItem('jwt', res.token)
         setIsLoggedIn(true)
+        setUserInfo(res.name, res.email);
         navigate('/movies')
       })
       .catch((err) => {
         setIsError(true)
+        setIsErrorUser(true)
+        openInfoTooltip();
         console.error(`Ошибка при авторизации ${err}`)
       })
-      .finally(() => setIsSend(false))
   }
 
   function handleRegister(username, email, password) {
-    setIsSend(true)
     mainApi.register(username, email, password)
       .then((res) => {
         if (res) {
@@ -75,140 +118,121 @@ function App() {
       })
       .catch((err) => {
         setIsError(true)
+        setIsErrorUser(true)
+        openInfoTooltip();
         console.error(`Ошибка при регистрации ${err}`)
       })
-      .finally(() => setIsSend(false))
   }
 
-  function logOut() {
-    localStorage.clear()
-    setIsLoggedIn(false)
+  function signOut() {
+    localStorage.clear();
+    setIsLoggedIn(false);
     navigate('/')
   }
 
-  function editUserInfo(username, email) {
-    setIsSend(true)
-    mainApi.setUserInfo(username, email, localStorage.jwt)
+  function editUserInfo(name, email) {
+    mainApi.setUserInfo(name, email, localStorage.jwt)
       .then(res => {
+        console.log(res);
         setCurrentUser(res)
-        setIsSuccess(true)
+        setIsErrorUser(false)
+        openInfoTooltip();
+        setResponseSuccess('Данные успешно изменены')
         setIsEdit(false)
       })
       .catch((err) => {
         setIsError(true)
+        setIsErrorUser(true)
+        openInfoTooltip();
+        setResponseError('При обновлении профиля произошла ошибка.');
         console.error(`Ошибка при редактировании данных пользователя ${err}`)
       })
-      .finally(() => setIsSend(false))
-  }
-
-  function handleDeleteMovie(deletemovieId) {
-    mainApi.deleteMovie(deletemovieId, localStorage.jwt)
-      .then(() => {
-        setSavedMovies(savedMovies.filter(movie => { return movie._id !== deletemovieId }))
-      })
-      .catch((err) => console.error(`Ошибка при удалении фильма ${err}`))
-  }
-
-  function handleSaveMovie(data) {
-    const isAdd = savedMovies.some(element => data.id === element.movieId)
-    const seachClickMovie = savedMovies.filter((movie) => {
-      return movie.movieId === data.id
-    })
-    if (isAdd) {
-      handleDeleteMovie(seachClickMovie[0]._id)
-    } else {
-      mainApi.addMovie(data, localStorage.jwt)
-        .then(res => {
-          setSavedMovies([res, ...savedMovies])
-        })
-        .catch((err) => console.error(`Ошибка при сохранении фильма ${err}`))
-    }
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <SendContext.Provider value={isSend}>
-        <ErrorContext.Provider value={isError}>
-          <div className="page">
-          {isCheckToken ? <Preloader /> :
-
-            <Routes>
-              <Route 
-                path='/signin' 
+      <div className="page">
+        <>
+          <Header isLoggedIn={isLoggedIn}/>
+          <Routes>
+            <Route 
+              path='/signin' 
                 element={isLoggedIn ? <Navigate to='/movies' replace /> :
-                  <Main name='signin' onLogin={handleLogin} setIsError={setIsError} />}
-              />
+                  <Login onLogin={handleLogin} setIsError={setIsError} isSend={isSend}/>
+                }
+            />
 
-              <Route 
-                path='/signup' 
-                element={isLoggedIn ? <Navigate to='/movies' replace /> :
-                  <Main name='signup' onRegister={handleRegister} setIsError={setIsError} />} 
-              />
+            <Route 
+              path='/signup' 
+              element={isLoggedIn ? <Navigate to='/movies' replace /> :
+                <Register onRegister={handleRegister} setIsError={setIsError} isSend={isSend}/>
+              } 
+            />
 
-              <Route 
-                path='/' 
-                element={
-                  <>
-                    <Header name='home' isLoggedIn={isLoggedIn}/>
-                    <Main name='home' />
-                    <Footer />
-                  </>
-                } 
-              />
+            <Route 
+              path='/' 
+              element={
+                <>
+                  <Main name='home' />
+                </>
+              } 
+            />
 
-              <Route 
-                path='/movies' 
-                element={<ProtectedRoute
-                  element={ProtectedPage}
-                  savedMovies={savedMovies}
-                  addMovie={handleSaveMovie}
-                  name='movies'
-                  isLoggedIn={isLoggedIn}
-                  setIsError={setIsError}
-                />}
-              />
+            <Route 
+              path='/movies' 
+              element={<ProtectedRoute
+                element={Movies}
+                isLoggedIn={isLoggedIn}
+                preloader={Preloader}
+                isLoading={isLoading}
+                savedMovies={savedMovies}
+                setSavedMovies={setSavedMovies}
+                name='movies'
+                setIsError={setIsError}
+              />}
+            />
 
-              <Route 
-                path='/saved-movies' 
-                element={<ProtectedRoute
-                  element={ProtectedPage}
-                  savedMovies={savedMovies}
-                  onDelete={handleDeleteMovie}
-                  name='savedmovies'
-                  isLoggedIn={isLoggedIn}
-                  setIsError={setIsError}
-                />}
-              />
+            <Route 
+              path='/saved-movies' 
+              element={<ProtectedRoute
+                element={SavedMovies}
+                isLoggedIn={isLoggedIn}
+                savedMovies={savedMovies}
+                setSavedMovies={setSavedMovies}
+                name='savedmovies'
+                setIsError={setIsError}
+              />}
+            />
 
-              <Route 
-                path='/profile' 
-                element={<ProtectedRoute
-                  element={ProtectedPage}
-                  logOut={logOut}
-                  name='profile'
-                  isLoggedIn={isLoggedIn}
-                  editUserInfo={editUserInfo}
-                  setIsError={setIsError}
-                  isSuccess={isSuccess}
-                  setSuccess={setSuccess}
-                  setIsEdit={setIsEdit}
-                  isEdit={isEdit}
-                />}
-              />
+            <Route 
+              path='/profile' 
+              element={<ProtectedRoute
+                element={Profile}
+                isLoggedIn={isLoggedIn}
+                signOut={signOut}
+                name='profile'
+                editUserInfo={editUserInfo}
+                setIsError={setIsError}
+                setIsEdit={setIsEdit}
+                isEdit={isEdit}
+                isError={isError}
+                isLoading={isLoading}
+              />}
+            />
 
-              <Route 
-                path='*' 
-                element={
-                  <>
-                    <Main name='error' />
-                  </>
-                } 
-              />
-            </Routes>
-          }
-          </div>
-        </ErrorContext.Provider>
-      </SendContext.Provider>
+            <Route 
+              path='*' 
+              element={ErrorPage} 
+            />
+          </Routes>
+          <Footer/>
+          <InfoTooltip 
+            isOpen={isInfoTooltipOpen} 
+            onClose={closeInfoTooltip} 
+            isErrorUser={isErrorUser}
+          /> 
+        </>
+      </div>
     </CurrentUserContext.Provider>
   );
 }

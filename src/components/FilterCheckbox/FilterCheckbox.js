@@ -1,43 +1,24 @@
 import './FilterCheckbox.css'
 
-export default function FilterCheckbox({ isChecked, toggleShort }) {
+function FilterCheckbox({toggleShort, isChecked}) {
   return (
-    <label className="search__label-container">
-      <div className="search__input-container">
+    <div className="filter-checkbox">
+      <label className="filter-checkbox__label">
         <input
+          className="filter-checkbox__input"
           type="checkbox"
-          className="search__check"
+          id="checkbox"
+          name="checkbox"
           onChange={toggleShort}
+          checked={isChecked}
         />
-        <svg
-          className="search__check-svg"
-          width="36"
-          height="20"
-          viewBox="0 0 36 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g id="smalltumb">
-            <rect
-              className={`search__check-svg-rect ${!isChecked ? "search__check-svg-rect_active" : ""}`}
-              id="tumb__COLOR:tumbler-on"
-              width="36"
-              height="20"
-              rx="10"
-              fill="#2BE080"
-            />
-            <circle
-              className={`search__check-svg-circle ${!isChecked ? "search__check-svg-circle_active" : ""}`}
-              id="tumb__COLOR:tumbler-on-2"
-              cx="26"
-              cy="10"
-              r="8"
-              fill="white"
-            />
-          </g>
-        </svg>
-      </div>
-      <span className="search__check-text">Короткометражки</span>
-    </label>
-  );
+        <span className="filter-checkbox__span" />
+      </label>
+      <span className="filter-checkbox__title">
+        Короткометражки
+      </span>
+    </div>
+  )
 }
+
+export default FilterCheckbox

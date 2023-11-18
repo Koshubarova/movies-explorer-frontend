@@ -4,20 +4,21 @@ import MoviesCard from '../MoviesCard/MoviesCard'
 import { useState, useEffect } from 'react'
 import Preloader from '../Preloader/Preloader'
 
-export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies, isLoading, serverError }) {
+export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies, isLoading, serverError, setSavedMovies }) {
   const { pathname } = useLocation()
   const [count, setCount] = useState('')
-  const movieCards = movies.slice(0, count)
+  const requestMovies = movies.slice(0, count)
 
-  function postMovieCards() {
+  function postRequestMovies() {
     const counter = { init: 16, step: 4}
     if (window.innerWidth < 1280) {
       counter.init = 12
       counter.step = 3
-    }if (window.innerWidth < 1024) {
+    } 
+    if (window.innerWidth < 1024) {
       counter.init = 8
       counter.step = 2
-    }
+    } 
     if (window.innerWidth < 650) {
       counter.init = 5
       counter.step = 2
@@ -27,58 +28,62 @@ export default function MoviesCardList({ movies, onDelete, addMovie, savedMovies
 
   useEffect(() => {
     if (pathname === '/movies') {
-      setCount(postMovieCards().init)
-      function postMovieCardsForResize() {
+      setCount(postRequestMovies().init)
+      function postRequestMoviesForResize() {
         if (window.innerWidth >= 1280) {
-          setCount(postMovieCards().init)
+          setCount(postRequestMovies().init)
         }
         if (window.innerWidth < 1280) {
-          setCount(postMovieCards().init)
+          setCount(postRequestMovies().init)
         }
         if (window.innerWidth < 1024) {
-          setCount(postMovieCards().init)
+          setCount(postRequestMovies().init)
         }
         if (window.innerWidth < 650) {
-          setCount(postMovieCards().init)
+          setCount(postRequestMovies().init)
         }
       }
-      window.addEventListener('resize', postMovieCardsForResize)
-      return () => window.removeEventListener('resize', postMovieCardsForResize)
+      window.addEventListener('resize', postRequestMoviesForResize)
+      return () => window.removeEventListener('resize', postRequestMoviesForResize)
     }
   }, [pathname, movies])
 
   function clickMore() {
-    setCount(count + postMovieCards().step)
+    setCount(count + postRequestMovies().step)
   }
 
   return (
     <section className='movies-cardlist'>
       <ul className='movies-cardlist__lists'>
         {isLoading ? <Preloader /> :
-          (pathname === '/movies' && movieCards.length !== 0) ?
-          movieCards.map(data => {
+          (pathname === '/movies' && requestMovies.length === 0) ?
+          <span className='movies-cardlist__search-error'>Ничего не найдено</span>
+          : (pathname === '/movies' && requestMovies.length !== 0) ?
+          requestMovies.map(data => {
               return (
                 <MoviesCard
                   key={data.id}
                   savedMovies={savedMovies}
                   addMovie={addMovie}
                   data={data}
+                  setSavedMovies={setSavedMovies}
                 />
               )
-            }) : movies.length !== 0 ?
+            }) : (pathname === '/saved-movies' && movies.length !== 0) ?
               movies.map(data => {
                 return (
                   <MoviesCard
                     key={data._id}
                     onDelete={onDelete}
                     data={data}
+                    setSavedMovies={setSavedMovies}
                   />
                 )
               }) : serverError ?
                 <span className='movies-cardlist__search-error'>Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Подождите немного и попробуйте ещё раз
                 </span>
                 : 
-                <span className='movies-cardlist__search-error'>«Ничего не найдено»</span>
+                <></>
         }
       </ul>
       {pathname === '/movies' && <button type='button' className={`movies-cardlist__more ${count >= movies.length && 'movies-cardlist__more_hidden'}`} onClick={clickMore}>Еще</button>}
