@@ -35,7 +35,7 @@ function Login({ onAuthorization, isLoading }) {
           id="email-input"
           type="email"
           required
-          placeholder="email"
+          placeholder="E-mail"
           onChange={handleChangeInput}
           pattern={EMAIL_VALIDATION}
           value={enteredValues.email || ""}
@@ -50,7 +50,7 @@ function Login({ onAuthorization, isLoading }) {
           id="password-input"
           type="password"
           required
-          placeholder="password"
+          placeholder="Пароль"
           onChange={handleChangeInput}
           value={enteredValues.password || ""}
           minLength="6"

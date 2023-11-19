@@ -37,7 +37,7 @@ function Register({ isLoading, onRegister }) {
           minLength="2"
           maxLength="40"
           required
-          placeholder="name"
+          placeholder="Имя"
           onChange={handleChangeInput}
           value={enteredValues.name || ""}
         />
@@ -51,7 +51,7 @@ function Register({ isLoading, onRegister }) {
           id="email-input"
           type="email"
           required
-          placeholder="email"
+          placeholder="E-mail"
           onChange={handleChangeInput}
           pattern={EMAIL_VALIDATION}
           value={enteredValues.email || ""}
@@ -66,7 +66,7 @@ function Register({ isLoading, onRegister }) {
           id="password-input"
           type="password"
           required
-          placeholder="password"
+          placeholder="Пароль"
           onChange={handleChangeInput}
           value={enteredValues.password || ""}
           minLength="6"
