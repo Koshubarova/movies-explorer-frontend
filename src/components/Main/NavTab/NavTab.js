@@ -5,7 +5,7 @@ import { Link } from "react-scroll";
 function NavTab() {
   return (
     <nav className="nav-tab">
-      <Link to="about" className="nav-tab__link" smooth={true} duration={700}>
+      <Link to="aboutProject" className="nav-tab__link" smooth={true} duration={700}>
         Узнать больше
       </Link>
     </nav>
