@@ -1,90 +1,50 @@
-import './Navigation.css';
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from "react-router-dom";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import "./Navigation.css";
+import account from "../../images/icon__COLOR_icon-main.svg";
 
-export default function Navigation({ isLoggedIn }) {
-  const { pathname } = useLocation()
-  const [isOpen, setIsOpen] = useState(false)
-
-  function handelClick() {
-    if (isOpen) {
-      setIsOpen(false)
-    } else {
-      setIsOpen(true)
-    }
-  }
-
-  function clickLink() {
-    setIsOpen(false)
-  }
-
-  useEffect(() => {
-    function closeBurgerForResize() {
-      if (document.documentElement.clientWidth > '767') {
-        setIsOpen(false)
-        window.removeEventListener('resize', closeBurgerForResize)
-      }
-    }
-    if (isOpen) {
-      window.addEventListener('resize', closeBurgerForResize)
-      return () => window.removeEventListener('resize', closeBurgerForResize)
-    }
-  }, [isOpen])
+function Navigation({ handleClose }) {
+  const setActiveButton = ({ isActive }) =>
+    isActive ? "navigation__link_active" : "navigation__link";
 
   return (
-    <>
-  {pathname === '/' && !isLoggedIn ?
-        <nav>
-          <ul className='header__links-container'>
-            <li>
-              <Link to={'/signup'} className="header__signup">Регистрация</Link>
-            </li>
-            <li>
-              <Link to={'/signin'} className="header__signin">Войти</Link>
-            </li>
-          </ul>
+    <div className="navigation__page-overlay">
+      <div className="navigation__overlay-wrapper"></div>
+      <div className="navigation__menu">
+        <button
+          className="navigation__close-button"
+          onClick={handleClose}
+        ></button>
+        <nav className="navigation__links-list">
+          <NavLink to="/" className={setActiveButton} onClick={handleClose}>
+            Главная
+          </NavLink>
+          <NavLink
+            to="/movies"
+            className={setActiveButton}
+            onClick={handleClose}
+          >
+            Фильмы
+          </NavLink>
+          <NavLink
+            to="/saved-movies"
+            className={setActiveButton}
+            onClick={handleClose}
+          >
+            Сохраненные фильмы
+          </NavLink>
         </nav>
-        : pathname === '/signin' || pathname === '/signup' ?
-        <>
-        </>
-        :
-        <>
-            <nav className={`header__nav ${isOpen ? 'header__nav_open' : ''}`}>
-            <ul className='header__links-container header__links-container_type_page'>
-              <li className='header__link-container'>
-                <Link
-                  to={'/'}
-                  className={`header__link ${pathname === '/' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Главная</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/movies'}
-                  className={`header__link ${pathname === '/movies' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Фильмы</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/saved-movies'}
-                  className={`header__link ${pathname === '/saved-movies' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Сохранённые фильмы</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/profile'}
-                  className={`header__link header__link_type_account ${pathname === '/profile' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Аккаунт <div className='header__profile-icon'></div></Link>
-              </li>
-            </ul>
-            <button type='button' className='header__burger-close' onClick={handelClick}></button>
-          </nav>
-          <button type='button' className='header__burger' onClick={handelClick}></button>
-        </>
-      }
-      </>
-  )
+        <Link
+          to="/profile"
+          className="navigation__account-button"
+          onClick={handleClose}
+        >
+          <div className="navigation__account-text">Аккаунт</div>
+          <img src={account} alt="account" />
+        </Link>
+      </div>
+    </div>
+  );
 }
+
+export default Navigation;

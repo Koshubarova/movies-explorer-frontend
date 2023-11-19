@@ -1,100 +1,116 @@
-import SearchForm from '../SearchForm/SearchForm';
-import MoviesCardList from '../MoviesCardList/MoviesCardList';
-import { useCallback, useState } from "react";
-import moviesApi from '../../utils/MoviesApi';
-import { useEffect } from "react";
-import Preloader from '../Preloader/Preloader';
+import React, { useState, useEffect } from "react";
+import "./Movies.css";
+import SearchForm from "../Movies/SearchForm/SearchForm";
+import MoviesCardList from "./MoviesCardList/MoviesCardList";
+import * as movies from "../../utils/MoviesApi";
+import { filterMovies, getFilterMovieDuration } from "../../utils/utils";
+import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
-export default function Movies({ 
-  addMovie, 
-  savedMovies, 
-  setIsError, 
-  isPreloader, 
-  setSavedMovies 
-}) {
-  const [allMovies, setAllMovies] = useState([])
-  const [filteredMovies, setFilteredMovies] = useState([]) 
-  const [searchRequest, setSearchRequest] = useState('')
-  const [isChecked, setIsChecked] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [serverError, setServerError] = useState(false)
+function Movies({ loggedIn, handleLikeFilm, savedMovies, onDeleteCard }) {
+  const [initialCardsMovies, setInitialCardsMovies] = useState([]);
+  const [filteredMovies, setFilteredMovies] = useState([]);
+  const [isQueryError, setisQueryError] = useState(false);
+  const [isNotFound, setIsNotFound] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isShortMovies, setisShortMovies] = useState(false);
 
-  const filter = useCallback((search, isChecked, movies) => {
-    setSearchRequest(search)
-    localStorage.setItem('movie', JSON.stringify(search))
-    localStorage.setItem('shorts', JSON.stringify(isChecked))
-    localStorage.setItem('allmovies', JSON.stringify(movies))
-    setFilteredMovies(movies.filter((movie) => {
-      const searchName = movie.nameRU.toLowerCase().includes(search.toLowerCase())
-      return isChecked ? (searchName && movie.duration <= 40) : searchName
-    }))
-  }, [])
-
-  function searchMovies(search) {
-    if (allMovies.length === 0) {
-      setIsLoading(true)
-      moviesApi.getAllMovies()
-        .then((res) => {
-          setAllMovies(res)
-          setIsChecked(false)
-          setServerError(false)
-          filter(search, isChecked, res)
-        })
-        .catch(err => {
-          setServerError(true)
-          console.error(`Ошибка при поиске фильмов ${err}`)
-        })
-        .finally(() => setIsLoading(false))
+  useEffect(() => {
+    if (localStorage.getItem("movieSearch")) {
+      setIsNotFound(filteredMovies.length === 0);
     } else {
-      filter(search, isChecked, allMovies)
+      setIsNotFound(false);
     }
+  }, [filteredMovies]);
+
+  function getShortMovieFiltered() {
+    setisShortMovies(!isShortMovies);
+    if (!isShortMovies) {
+      if (getFilterMovieDuration(initialCardsMovies).length === 0) {
+        setFilteredMovies(getFilterMovieDuration(initialCardsMovies));
+      } else {
+        setFilteredMovies(getFilterMovieDuration(initialCardsMovies));
+      }
+    } else {
+      setFilteredMovies(initialCardsMovies);
+    }
+    localStorage.setItem("shortMovies", !isShortMovies);
+  }
+
+  function getEditFilteredMovie(movies, query, short) {
+    const moviesCardList = filterMovies(movies, query, short);
+    setInitialCardsMovies(moviesCardList);
+    setFilteredMovies(short ? getFilterMovieDuration(moviesCardList) : moviesCardList);
+    localStorage.setItem("movies", JSON.stringify(moviesCardList));
+    localStorage.setItem("allMovies", JSON.stringify(movies));
   }
 
   useEffect(() => {
-    if (localStorage.allmovies && localStorage.shorts && localStorage.movie) {
-      const movies = JSON.parse(localStorage.allmovies)
-      const search = JSON.parse(localStorage.movie)
-      const isChecked = JSON.parse(localStorage.shorts)
-      setServerError(false)
-      setSearchRequest(search)
-      setIsChecked(isChecked)
-      setAllMovies(movies)
-      filter(search, isChecked, movies)
-    }
-  }, [filter])
-
-  function toggleShort() {
-    if (isChecked) {
-      setIsChecked(false)
-      filter(searchRequest, false, allMovies)
-      localStorage.setItem('shorts', JSON.stringify(false))
+    if (localStorage.getItem("shortMovies") === "true") {
+      setisShortMovies(true);
     } else {
-      setIsChecked(true)
-      filter(searchRequest, true, allMovies)
-      localStorage.setItem('shorts', JSON.stringify(true))
+      setisShortMovies(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (localStorage.getItem("movies")) {
+      const movies = JSON.parse(localStorage.getItem("movies"));
+      setInitialCardsMovies(movies);
+      if (localStorage.getItem("shortMovies") === "true") {
+        setFilteredMovies(getFilterMovieDuration(movies));
+      } else {
+        setFilteredMovies(movies);
+      }
+    }
+  }, []);
+
+  function getSearchFilterMovie(query) {
+    localStorage.setItem("movieSearch", query);
+    localStorage.setItem("shortMovies", isShortMovies);
+
+    if (localStorage.getItem("allMovies")) {
+      const movies = JSON.parse(localStorage.getItem("allMovies"));
+      getEditFilteredMovie(movies, query, isShortMovies);
+    } else {
+      setIsLoading(true);
+      movies
+        .getMovies()
+        .then((cardsData) => {
+          getEditFilteredMovie(cardsData, query, isShortMovies);
+          setisQueryError(false);
+        })
+        .catch((err) => {
+          setisQueryError(true);
+          console.log(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }
 
   return (
-    <>
+    <section className="movies">
+      <Header loggedIn={loggedIn} />
       <SearchForm
-        isChecked={isChecked}
-        searchMovies={searchMovies}
-        searchRequest={searchRequest}
-        toggleShort={toggleShort}
-        setIsError={setIsError}
+        isShortMovies={isShortMovies}
+        onFilterMovies={getShortMovieFiltered}
+        getSearchFilterMovie={getSearchFilterMovie}
       />
-      {isLoading ? (
-      <Preloader/> ) : (
       <MoviesCardList
-        movies={filteredMovies}
-        addMovie={addMovie}
+        cards={filteredMovies}
+        isQueryError={isQueryError}
         savedMovies={savedMovies}
+        handleLikeFilm={handleLikeFilm}
+        onDeleteCard={onDeleteCard}
         isLoading={isLoading}
-        serverError={serverError}
-        setSavedMovies={setSavedMovies}
+        isSavedFilms={false}
+        isNotFound={isNotFound}
       />
-      )}
-    </>
-  )
+      <Footer />
+    </section>
+  );
 }
+
+export default Movies;

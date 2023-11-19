@@ -1,54 +1,59 @@
-import SearchForm from "../SearchForm/SearchForm";
-import MoviesCardList from "../MoviesCardList/MoviesCardList";
-import { useCallback, useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./SavedMovies.css";
+import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
+import { filterMovies, getFilterMovieDuration } from "../../utils/utils";
+import SearchForm from "../Movies/SearchForm/SearchForm";
+import MoviesCardList from "../Movies/MoviesCardList/MoviesCardList";
 
-export default function SavedMovies({ savedMovies, setSavedMovies, onDelete, setIsError }) {
-
-  const [filteredMovies, setFilteredMovies] = useState(savedMovies)
-  const [searchRequest, setSearchRequest] = useState('')
-  const [isChecked, setIsChecked] = useState(false)
-
-  const filter = useCallback((search, isChecked, movies) => {
-    setSearchRequest(search)
-    setFilteredMovies(movies.filter((movie) => {
-      const searchName = movie.nameRU.toLowerCase().includes(search.toLowerCase())
-      return isChecked ? (searchName && movie.duration <= 40) : searchName
-    }))
-  }, [])
-
-  function searchMovies(search) {
-    filter(search, isChecked, savedMovies)
-  }
+const SavedMovies = ({ loggedIn, onDeleteCard, savedMovies }) => {
+  const [isFilteredMovies, setFilteredMovies] = useState(savedMovies);
+  const [isShortMovies, setShortFilm] = useState(false);
+  const [isSearchRequest, setSearchRequest] = useState("");
+  const [isNotFound, setIsNotFound] = useState(false);
 
   useEffect(() => {
-    filter(searchRequest, isChecked, savedMovies)
-  }, [filter, savedMovies, isChecked, searchRequest]) 
-
-  function toggleShort() {
-    if (isChecked) {
-      setIsChecked(false)
-      filter(searchRequest, false, savedMovies)
+    if (isFilteredMovies.length === 0) {
+      setIsNotFound(true);
     } else {
-      setIsChecked(true)
-      filter(searchRequest, true, savedMovies)
+      setIsNotFound(false);
     }
+  }, [isFilteredMovies]);
+
+  useEffect(() => {
+    const moviesCardList = filterMovies(savedMovies, isSearchRequest);
+    setFilteredMovies(
+      isShortMovies ? getFilterMovieDuration(moviesCardList) : moviesCardList
+    );
+  }, [savedMovies, isShortMovies, isSearchRequest]);
+
+  function getShortMovieFiltered() {
+    setShortFilm(!isShortMovies);
+  }
+
+  function getSearchFilterMovie(request) {
+    setSearchRequest(request);
   }
 
   return (
     <>
-      <SearchForm
-        isChecked={isChecked}
-        searchMovies={searchMovies}
-        searchRequest={searchRequest}
-        toggleShort={toggleShort}
-        setIsError={setIsError}
-        savedMovies={savedMovies}
-      />
-      <MoviesCardList
-        movies={filteredMovies}
-        onDelete={onDelete}
-        setSavedMovies={setSavedMovies}
-      />
+      <section className="saved-movies">
+        <Header loggedIn={loggedIn} />
+        <SearchForm
+          onFilterMovies={getShortMovieFiltered}
+          getSearchFilterMovie={getSearchFilterMovie}
+        />
+        <MoviesCardList
+          cards={isFilteredMovies}
+          onDeleteCard={onDeleteCard}
+          savedMovies={savedMovies}
+          isSavedFilms={true}
+          isNotFound={isNotFound}
+        />
+        <Footer />
+      </section>
     </>
-  )
-}
+  );
+};
+
+export default SavedMovies;

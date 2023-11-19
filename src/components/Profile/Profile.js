@@ -1,93 +1,104 @@
-import './Profile.css'
-import useFormValidation from '../../hooks/useFormValidation'
-import { useContext, useEffect, useState } from 'react'
-import CurrentUserContext from '../../contexts/CurrentUserContext'
+import React, { useEffect, useContext, useState } from "react";
+import CurrentUserContext from "../CurrentUserContext/CurrentUserContext";
+import useForm from "../../hooks/useForm";
+import "./Profile.css";
+import Header from "../Header/Header";
+import { EMAIL_VALIDATION } from "../../utils/constants";
 
-export default function Profile({ 
-  signOut, 
-  editUserInfo, 
-  isError, 
-  isEdit, 
-  setIsEdit,
-}) {
+function Profile({ loggedIn, signOut, onUpdateUser, isLoading }) {
   const currentUser = useContext(CurrentUserContext);
-
-  const { values, handleChange, isValid, reset , errors } = useFormValidation();
-  const [isLastValues, setIsLastValues] = useState(false);
+  const { enteredValues, isErrors, handleChangeInput, isFormValid, resetForm } =
+    useForm();
+  const [isLastData, setIsLastData] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
-      reset(currentUser);
+      resetForm(currentUser);
     }
-  }, [currentUser, reset]);
+  }, [currentUser, resetForm]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    editUserInfo(values.name, values.email);
+  function getFormSubmit(event) {
+    event.preventDefault();
+    onUpdateUser({
+      name: enteredValues.name,
+      email: enteredValues.email,
+    });
   }
 
   useEffect(() => {
-    if (currentUser.name === values.name && currentUser.email === values.email) {
-      setIsLastValues(true);
+    if (
+      currentUser.name === enteredValues.name &&
+      currentUser.email === enteredValues.email
+    ) {
+      setIsLastData(true);
     } else {
-      setIsLastValues(false);
+      setIsLastData(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values]);
+  }, [enteredValues]);
 
   return (
-    <section className="profile">
-      <h2 className='profile__title'>{`Привет, ${currentUser.name}`}</h2>
-      <form noValidate name='profile' className='profile__form' onSubmit={handleSubmit}>
-      <label className='profile__label'>
-          <span className='profile__subtitle'>Имя</span>
-          <input
-            required
-            type='text'
-            name='name'
-            minLength={2}
-            className={'profile__input'}
-            value={values.name || ""}
-            onChange={handleChange}
-            disabled={!isEdit ? true : false}
-            pattern={"^[а-яА-ЯёЁa-zA-Z\\s\\-]+"}
-          />
-        </label>
-        <span className={`profile__error ${currentUser.name === 'name' ? 'profile__error_type_name' : ''}`}>{errors.message}</span>
-        <label className='profile__label'>
-          <span className='profile__subtitle'>E-mail </span>
-          <input
-            required
-            type='email'
-            name='email'
-            className='profile__input'
-            value={values.email || ""}
-            onChange={handleChange}
-            disabled={!isEdit ? true : false}
-            pattern={"[A-Za-z0-9_]+@[A-Za-z0-9]+\\.[a-z]{2,4}"}
-          />
-        </label>
-        <span className={`profile__error ${currentUser.name === 'name' ? 'profile__error_type_name' : ''}`}>{errors.message}</span>
-      {!isEdit ? (
-        <>
+    <>
+      <Header loggedIn={loggedIn} />
+      <section className="profile">
+        <h3 className="profile__title">Привет, {currentUser.name}!</h3>
+        <form
+          id="form"
+          className="profile__form"
+          onSubmit={getFormSubmit}
+          noValidate
+        >
+          <label className="profile__label">
+            Name
+            <input
+              name="name"
+              className="profile__input"
+              id="name-input"
+              type="text"
+              minLength="2"
+              maxLength="40"
+              required
+              placeholder="name"
+              onChange={handleChangeInput}
+              value={enteredValues.name || ""}
+            />
+            <span className="profile__input-error">{isErrors.name}</span>
+          </label>
+
+          <div className="profile__border"></div>
+          <label className="profile__label">
+            Email
+            <input
+              name="email"
+              className="profile__input"
+              id="email-input"
+              type="email"
+              required
+              placeholder="email"
+              onChange={handleChangeInput}
+              pattern={EMAIL_VALIDATION}
+              value={enteredValues.email || ""}
+            />
+            <span className="profile__input-error">{isErrors.email}</span>
+          </label>
           <button
-            type="button"
-            className='profile__edit'
-            onClick={() => {
-              setIsEdit(true)
-            }}
-          >Редактировать</button>
-          </> ) : (
-            <>
-              <button
-                type="submit"
-                className={`profile__submit ${(values.name === currentUser.name && values.email === currentUser.email) || !isValid || isError ? 'profile__submit_disabled' : ''}`}
-                disabled={!isValid || isLastValues || isError}
-              >Сохранить</button>
-            </>
-        )}
-      </form>
-      <button type='button' onClick={signOut} className='profile__button'>Выйти из аккаунта</button>
-    </section>
-  )
+            type="submit"
+            disabled={!isFormValid ? true : false}
+            className={
+              !isFormValid || isLoading || isLastData
+                ? "profile__button-save profile__button-save_inactive"
+                : "profile__button-save"
+            }
+          >
+            {!isFormValid ? "Редактировать" : "Сохранить"}
+          </button>
+          <button type="button" className="profile__exit" onClick={signOut}>
+            Выйти из аккаунта
+          </button>
+        </form>
+      </section>
+    </>
+  );
 }
+
+export default Profile;
