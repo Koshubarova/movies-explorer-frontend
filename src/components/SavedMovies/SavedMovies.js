@@ -40,6 +40,7 @@ const SavedMovies = ({ loggedIn, onDeleteCard, savedMovies }) => {
       <section className="saved-movies">
         <Header loggedIn={loggedIn} />
         <SearchForm
+          isShortMovies={isShortMovies}
           onFilterMovies={getShortMovieFiltered}
           getSearchFilterMovie={getSearchFilterMovie}
         />

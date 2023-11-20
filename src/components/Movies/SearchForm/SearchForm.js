@@ -36,6 +36,12 @@ const SearchForm = ({
     setRequest(e.target.value);
   }
 
+  useEffect(() => {
+    if(request) {
+      getSearchFilterMovie(request);
+    }
+  }, [isShortMovies]);
+
   return (
     <section className="search-form">
       <form className="search-form__form" id="form" onSubmit={getFormSubmit}>
