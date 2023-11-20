@@ -4,6 +4,15 @@ import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 import SearchError from "../../SearchError/SearchError";
 import Preloader from "../../Preloader/Preloader";
+import {
+  DESKTOP_DISPLAY,
+  TABLET_DISPLAY,
+  MOVIE_COUNTER_FOUR,
+  MOVIE_COUNTER_TWO,
+  MOVIE_COUNTER_WIDTH_DISPLAY_XXL,
+  MOVIE_COUNTER_WIDTH_DISPLAY_XL,
+  MOVIE_COUNTER_WIDTH_DISPLAY_M,
+} from "../../../utils/constants";
 
 function MoviesCardList({
   cards,
@@ -19,23 +28,23 @@ function MoviesCardList({
 
   function getShowCounterMovie() {
     const display = window.innerWidth;
-    if (display > 1279) {
-      setShownMovies(16);
-    } else if (display > 767) {
-      setShownMovies(8);
+    if (display > DESKTOP_DISPLAY) {
+      setShownMovies(MOVIE_COUNTER_WIDTH_DISPLAY_XXL);
+    } else if (display > TABLET_DISPLAY) {
+      setShownMovies(MOVIE_COUNTER_WIDTH_DISPLAY_XL);
     } else {
-      setShownMovies(5);
+      setShownMovies(MOVIE_COUNTER_WIDTH_DISPLAY_M);
     }
   }
 
   function getWidthMovieCounterDisplay() {
     const display = window.innerWidth;
     if (display > 1279) {
-      setShownMovies(shownMovies + 4);
-    } else if (display > 767) {
-      setShownMovies(shownMovies + 2);
+      setShownMovies(shownMovies + MOVIE_COUNTER_FOUR);
+    } else if (display > TABLET_DISPLAY) {
+      setShownMovies(shownMovies + MOVIE_COUNTER_TWO);
     } else {
-      setShownMovies(shownMovies + 2);
+      setShownMovies(shownMovies + MOVIE_COUNTER_TWO);
     }
   }
 
