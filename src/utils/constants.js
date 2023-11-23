@@ -1,174 +1,23 @@
-import pic from '../images/pic.svg'
-export const movies = [
-  {
-    id: 1,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 2,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 3,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 4,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 5,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 6,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 7,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 8,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 9,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 10,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 11,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 12,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 13,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 14,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 15,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 16,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 17,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 40,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 18,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 19,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 20,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  }
-]
+const EMAIL_VALIDATION =
+  "^[A-Za-z0-9\\._%\\+\\-]+@([A-Za-z0-9\\-]+\\.)+[A-Za-z]{2,}$";
 
-export const savedMovies = [
-  {
-    id: 1,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 40,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 2,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 3,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-  {
-    id: 4,
-    name: '33 слова о дизайне',
-    image: pic,
-    duration: 100,
-    trailerLink: "https://www.youtube.com/watch?v=oZq_KEAcRwE",
-  },
-]
+  const DESKTOP_DISPLAY = 1279;
+  const TABLET_DISPLAY = 767;
+  
+  const MOVIE_COUNTER_WIDTH_DISPLAY_XXL = 16;
+  const MOVIE_COUNTER_WIDTH_DISPLAY_XL = 8;
+  const MOVIE_COUNTER_WIDTH_DISPLAY_M = 5;
+  
+  const MOVIE_COUNTER_FOUR = 4;
+  const MOVIE_COUNTER_TWO = 2;
+  
+  export {
+    EMAIL_VALIDATION,
+    DESKTOP_DISPLAY,
+    TABLET_DISPLAY,
+    MOVIE_COUNTER_FOUR,
+    MOVIE_COUNTER_TWO,
+    MOVIE_COUNTER_WIDTH_DISPLAY_XXL,
+    MOVIE_COUNTER_WIDTH_DISPLAY_XL,
+    MOVIE_COUNTER_WIDTH_DISPLAY_M,
+  };

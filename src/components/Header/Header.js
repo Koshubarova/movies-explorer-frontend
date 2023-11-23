@@ -1,90 +1,74 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from "react-router-dom";
-import './Header.css'
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
+import "./Header.css";
+import logo from "../../images/logo.svg";
+import account from "../../images/icon__COLOR_icon-main.svg";
+import menu from "../../images/menu-button.svg";
+import Navigation from "../Navigation/Navigation";
 
-export default function Header({ name, loggedIn }) {
-  const { pathname } = useLocation()
-  const [isOpen, setIsOpen] = useState(false)
+function Header({ loggedIn }) {
+  const [isClicked, setIsClicked] = React.useState(false);
 
-  function handelClick() {
-    if (isOpen) {
-      setIsOpen(false)
-    } else {
-      setIsOpen(true)
-    }
+  const setActiveButton = ({ isActive }) =>
+    isActive ? "header__button_active" : "header__button";
+
+  function handleOpen() {
+    setIsClicked(true);
   }
 
-  function clickLink() {
-    setIsOpen(false)
+  function handleClose() {
+    setIsClicked(false);
   }
-
-  useEffect(() => {
-    function closeBurgerForResize() {
-      if (document.documentElement.clientWidth > '767') {
-        setIsOpen(false)
-        window.removeEventListener('resize', closeBurgerForResize)
-      }
-    }
-    if (isOpen) {
-      window.addEventListener('resize', closeBurgerForResize)
-      return () => window.removeEventListener('resize', closeBurgerForResize)
-    }
-  }, [isOpen])
 
   return (
-    <header className={`header page__header ${name !== 'home' ? 'page__header_type_page' : ''}`}>
-      <div>
-        <Link to={'/'} className="header__link-home"></Link>
-      </div>
-      {name === 'home' && !loggedIn ?
-        <nav>
-          <ul className='header__links-container'>
-            <li>
-              <Link to={'/signup'} className="header__signup">Регистрация</Link>
-            </li>
-            <li>
-              <Link to={'/signin'} className="header__signin">Войти</Link>
-            </li>
-          </ul>
-        </nav>
-        :
-        <>
-          <nav className={`header__nav ${isOpen ? 'header__nav_open' : ''}`}>
-            <ul className='header__links-container header__links-container_type_page'>
-              <li className='header__link-container'>
-                <Link
-                  to={'/'}
-                  className={`header__link ${pathname === '/' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Главная</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/movies'}
-                  className={`header__link ${pathname === '/movies' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Фильмы</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/saved-movies'}
-                  className={`header__link ${pathname === '/saved-movies' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Сохранённые фильмы</Link>
-              </li>
-              <li className='header__link-container'>
-                <Link
-                  to={'/profile'}
-                  className={`header__link header__link_type_account ${pathname === '/profile' ? 'header__link_active' : ''}`}
-                  onClick={clickLink}
-                >Аккаунт <div className='header__profile-icon'></div></Link>
-              </li>
-            </ul>
-            <button type='button' className='header__burger-close' onClick={handelClick}></button>
-          </nav>
-          <button type='button' className='header__burger' onClick={handelClick}></button>
-        </>
-      }
-    </header>
-  )
+    <>
+      {!loggedIn ? (
+        <header className="header" id="header">
+          <Link to="/" className="header__logo">
+            <img src={logo} alt="logo" />
+          </Link>
+          <div className="header__button-wrapper">
+            <Link to="/signup" className="header__button header__button-shadow">
+              Регистрация
+            </Link>
+            <Link to="/signin" className="header__button header__button-green">
+              Войти
+            </Link>
+          </div>
+        </header>
+      ) : (
+        <header className="header header_gray" id="header-gray">
+          <Link to="/" className="header__logo">
+            <img src={logo} alt="logo" />
+          </Link>
+          <div className="header__button-wrapper header__button-wrapper_films">
+            <NavLink to="/movies" className={setActiveButton}>
+              Фильмы
+            </NavLink>
+            <NavLink to="/saved-movies" className={setActiveButton}>
+              Сохраненные фильмы
+            </NavLink>
+          </div>
+          <div className="header__button-wrapper">
+            <Link to="/profile" className="header__account-button">
+              <div className="header__account-image-wrapper">
+                <span className="header__account-text">Аккаунт</span>
+                <img
+                  className="header__account-image"
+                  src={account}
+                  alt="account pic"
+                />
+              </div>
+            </Link>
+            <button className="header__menu-button" onClick={handleOpen}>
+              <img src={menu} alt="menu" />
+            </button>
+          </div>
+          {isClicked ? <Navigation handleClose={handleClose} /> : ""}
+        </header>
+      )}
+    </>
+  );
 }
+
+export default Header;

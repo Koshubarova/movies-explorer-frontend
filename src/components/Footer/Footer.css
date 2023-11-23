@@ -29,7 +29,7 @@
 
 .footer__title {
   margin: 0 0 20px 0;
-  color: #8B8B8B;
+  color: #8b8b8b;
   text-align: center;
   font-size: 13px;
   font-weight: 400;
@@ -72,7 +72,7 @@
 
 .footer__subtitle {
   margin: 0;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 13px;
   font-weight: 400;
   line-height: 16px;
@@ -86,12 +86,12 @@
 
 .footer__link {
   margin-right: 20px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-decoration: none;
   font-size: 13px;
   font-weight: 400;
   line-height: 16px;
-  transition: opacity .5s linear;
+  transition: opacity 0.5s linear;
 }
 
 @media screen and (max-width: 767px) {

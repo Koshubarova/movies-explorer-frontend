@@ -1,55 +1,104 @@
-import { Link } from 'react-router-dom'
-import Form from '../Form/Form'
-import './Profile.css'
-import Input from '../Input/Input'
-import useFormValidation from '../../hooks/useFormValidation'
-import { useEffect } from 'react'
+import React, { useEffect, useContext, useState } from "react";
+import CurrentUserContext from "../CurrentUserContext/CurrentUserContext";
+import useForm from "../../hooks/useForm";
+import "./Profile.css";
+import Header from "../Header/Header";
+import { EMAIL_VALIDATION } from "../../utils/constants";
 
-export default function Profile({ name, setLoggedIn }) {
-  const { values, errors, isInputValid, isValid, handleChange, reset } = useFormValidation()
+function Profile({ loggedIn, signOut, onUpdateUser, isLoading }) {
+  const currentUser = useContext(CurrentUserContext);
+  const { enteredValues, isErrors, handleChangeInput, isFormValid, resetForm } =
+    useForm();
+  const [isLastData, setIsLastData] = useState(false);
 
   useEffect(() => {
-    reset({username: 'Виталий', email: 'pochta@yandex.ru'})
-  }, [reset])
+    if (currentUser) {
+      resetForm(currentUser);
+    }
+  }, [currentUser, resetForm]);
 
-  function onEdit(evt) {
-    evt.preventDefault()
+  function getFormSubmit(event) {
+    event.preventDefault();
+    onUpdateUser({
+      name: enteredValues.name,
+      email: enteredValues.email,
+    });
   }
 
-  function outLogin() {
-    setLoggedIn(false)
-  }
+  useEffect(() => {
+    if (
+      currentUser.name === enteredValues.name &&
+      currentUser.email === enteredValues.email
+    ) {
+      setIsLastData(true);
+    } else {
+      setIsLastData(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enteredValues]);
+
   return (
-    <section className="profile">
-      <h2 className='profile__title'>{`Привет, Виталий!`}</h2>
-      <Form
-        name={name}
-        isValid={isValid}
-        onSubmit={onEdit}
-      >
-        <Input
-          selectname={name}
-          name='username'
-          type='text'
-          title='Имя'
-          minLength='3'
-          value={values.username}
-          isInputValid={isInputValid.username}
-          error={errors.username}
-          onChange={handleChange}
-        />
-        <Input
-          selectname={name}
-          name='email'
-          type='email'
-          title='E-mail'
-          value={values.email}
-          isInputValid={isInputValid.email}
-          error={errors.email}
-          onChange={handleChange}
-        />
-      </Form>
-      <Link to={'/'} onClick={outLogin} className='profile__link'>Выйти из аккаунта</Link>
-    </section>
-  )
+    <>
+      <Header loggedIn={loggedIn} />
+      <section className="profile">
+        <h3 className="profile__title">Привет, {currentUser.name}!</h3>
+        <form
+          id="form"
+          className="profile__form"
+          onSubmit={getFormSubmit}
+          noValidate
+        >
+          <label className="profile__label">
+            Name
+            <input
+              name="name"
+              className="profile__input"
+              id="name-input"
+              type="text"
+              minLength="2"
+              maxLength="40"
+              required
+              placeholder="name"
+              onChange={handleChangeInput}
+              value={enteredValues.name || ""}
+            />
+            <span className="profile__input-error">{isErrors.name}</span>
+          </label>
+
+          <div className="profile__border"></div>
+          <label className="profile__label">
+            Email
+            <input
+              name="email"
+              className="profile__input"
+              id="email-input"
+              type="email"
+              required
+              placeholder="email"
+              onChange={handleChangeInput}
+              pattern={EMAIL_VALIDATION}
+              value={enteredValues.email || ""}
+            />
+            <span className="profile__input-error">{isErrors.email}</span>
+          </label>
+          <button
+            type="submit"
+            disabled={!isFormValid || isLastData ? true : false}
+            className={
+              !isFormValid || isLoading || isLastData
+                ? "profile__button-save profile__button-save_inactive"
+                : "profile__button-save"
+            }
+          >
+            {!isFormValid ? "Редактировать" : "Сохранить"}
+          </button>
+          <button type="button" className="profile__exit" onClick={signOut}>
+            Выйти из аккаунта
+          </button>
+        </form>
+      </section>
+    </>
+  );
 }
+
+export default Profile;

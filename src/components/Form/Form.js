@@ -1,31 +1,47 @@
-import './Form.css'
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './Form.css';
+import logo from '../../images/logo.svg';
 
-export default function Form({ name, children, isValid, onSubmit }) {
-
+function Form({
+  linkText,
+  link,
+  children,
+  title,
+  buttonText,
+  question,
+  onSubmit,
+  isDisabled,
+  isLoading,
+}) {
   return (
-    <form noValidate name={name} onSubmit={onSubmit}>
-      {children}
-      {name === 'signin' ?
-        <>
-          <span className='login__error-request'>{'Ошибка при входе'}</span>
-          <button
+    <section className="form">
+      <Link to="/" className="form__logo">
+        <img src={logo} alt="logo" />
+      </Link>
+      <h3 className="form__title">{title}</h3>
+      <form className="forma" id="form" onSubmit={onSubmit} noValidate>
+        {children}
+        <button
+            className={
+              isDisabled || isLoading
+                ? "form__button-save form__button-save_inactive"
+                : "form__button-save"
+            }
             type="submit"
-            className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}
-            disabled={!isValid}
-          >{'Войти'}</button>
-        </>
-        :
-        name === 'signup' ?
-          <>
-            <span className='login__error-request login__error-request_type_reg'>{'Ошибка при регистрации'}</span>
-            <button type="submit" className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}>{'Зарегистрироваться'}</button>
-          </>
-          :
-          <>
-            <span className='profile__error-request'>{'Ошибка при обновлении провиля'}</span>
-            <button type="submit" className='profile__submit'>{'Редактировать'}</button>
-          </>
-      }
-    </form>
-  )
+            disabled={isDisabled ? true : false}
+          >
+          {buttonText}
+        </button>
+      </form>
+      <p className="form__text">
+        {question}
+        <Link to={link} className="form__link">
+          {linkText}
+        </Link>
+      </p>
+    </section>
+  );
 }
+
+export default Form;
